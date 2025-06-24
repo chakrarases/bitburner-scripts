@@ -27,3 +27,4 @@ alias ss="run stockmaster.js -l";
 alias xp="run daemon.js -vx --tail --no-share";
 alias xx="run daemon.js -x";
 alias n0="connect n00dles";
+alias git="run git-pull.js";

@@ -1,7 +1,6 @@
 {
   "priority-aug": [
     "CashRoot Starter Kit",
-    "Augmented Targeting II",
     "Neuregen Gene Modification",
     "Neuroreceptor Management Implant",
     "Social Negotiation Assistant (S.N.A)",
