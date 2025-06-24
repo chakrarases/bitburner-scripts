@@ -10,6 +10,33 @@
     "Neural Accelerator",
     "Cranial Signal Processors - Gen V",
     "BitRunners Neurolink",
-    "SmartJaw"
+    "OmniTek InfoLoad",
+    "nextSENS Gene Modification",
+    "Neuronal Densification",
+    "Xanipher",
+    "QLink",
+    "SmartJaw",
+    "PC Direct-Neural Interface NeuroNet Injector",
+    "ECorp HVMind Implant"
+  ],
+  "aug-desired": [
+    "CashRoot Starter Kit",
+    "Neuregen Gene Modification",
+    "Neuroreceptor Management Implant",
+    "Social Negotiation Assistant (S.N.A)",
+    "Neural-Retention Enhancement",
+    "CRTX42-AA Gene Modification",
+    "The Black Hand",
+    "Neural Accelerator",
+    "Cranial Signal Processors - Gen V",
+    "BitRunners Neurolink",
+    "OmniTek InfoLoad",
+    "nextSENS Gene Modification",
+    "Neuronal Densification",
+    "Xanipher",
+    "QLink",
+    "SmartJaw",
+    "PC Direct-Neural Interface NeuroNet Injector",
+    "ECorp HVMind Implant"
   ]
 }
