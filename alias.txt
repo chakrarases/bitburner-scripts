@@ -26,3 +26,4 @@ alias ss="run stockmaster.js -l";
 alias xx="run daemon.js -x";
 alias n0="connect n00dles";
 alias git="run git-pull.js";
+alias baug="run faction-manager.js --purchase --ignore-stocks";
