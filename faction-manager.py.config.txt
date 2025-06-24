@@ -1,0 +1,20 @@
+{
+  "priority-aug": [
+    "CashRoot Starter Kit",
+    "Augmented Targeting II",
+    "Neuregen Gene Modification",
+    "Neuroreceptor Management Implant",
+    "Social Negotiation Assistant (S.N.A)",
+    "Neural-Retention Enhancement",
+    "CRTX42-AA Gene Modification",
+    "The Black Hand",
+    "Neural Accelerator",
+    "Cranial Signal Processors - Gen V",
+    "BitRunners Neurolink",
+    "SmartJaw"
+  ],
+  "stat-desired": [
+    "hack_grow",
+    "hack_exp"
+  ]
+}
