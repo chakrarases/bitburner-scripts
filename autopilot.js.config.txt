@@ -1,1 +1,1 @@
-[["install-at-aug-count",12],["install-at-aug-plus-nf-count",20],["xp-mode-interval-minutes",15]]
+[["install-at-aug-count",13],["install-at-aug-plus-nf-count",26],["xp-mode-interval-minutes",55]]
