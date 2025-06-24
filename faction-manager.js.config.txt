@@ -11,9 +11,5 @@
     "Cranial Signal Processors - Gen V",
     "BitRunners Neurolink",
     "SmartJaw"
-  ],
-  "stat-desired": [
-    "hack_grow",
-    "hack_exp"
   ]
 }
