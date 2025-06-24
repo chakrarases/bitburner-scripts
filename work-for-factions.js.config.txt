@@ -1,0 +1,8 @@
+{
+  "first": [
+    "Sector-12","Tian Di Hui","Chongqing","Daedalus","BitRunners","The Black Hand"
+  ],
+  "pay-for-studies-threshold":2000000,
+  "disable-treating-gang-as-sole-provider-of-its-augs":true,
+  "training-stat-per-multi-threshold": 300
+}

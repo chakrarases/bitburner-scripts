@@ -1,0 +1,14 @@
+{
+  "first": [
+    "Daedalus","BitRunners","The Black Hand","Sector-12"
+  ],
+  "skip": [
+    "Netburners",
+    "Tetrads","Slum Snakes","The Dark Army",
+    "The Syndicate","Speakers for the Dead",
+    "Fulcrum Secret Technologies","ECorp","Bachman & Associates",
+    "Clarke Incorporated","OmniTek Incorporated","NWO",
+    "Blade Industries","MegaCorp","KuaiGong International",
+    "Four Sigma","Volhaven"
+  ]
+}
