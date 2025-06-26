@@ -657,8 +657,8 @@ export async function main(ns) {
         const rushGangsArgs = workForFactionsArgs.concat(...[ // Everything above, plus...
             "--crime-focus", // Start off by trying to work for each of the crime factions (generally have combat reqs)
             "--training-stat-per-multi-threshold", 200
-            //, // Be willing to spend more time grinding for stats rather than skipping a faction
-            //"--prioritize-invites"
+            , // Be willing to spend more time grinding for stats rather than skipping a faction
+            "--prioritize-invites"
             ]); // Don't actually start working for factions until we've earned as many invites as we think we can
         // If gangs are unlocked, micro-manage how 'work-for-factions.js' is running by killing off unwanted instances
         if (2 in unlockedSFs) {
