@@ -857,13 +857,13 @@ export async function main(ns) {
             if (totalCost == 0) totalCost = 1; // Hack, logic below expects some non-zero reserve in preparation for ascending.
         }
 
-        // Heuristic: if we can afford 4 or more augs in the first ~20 minutes, it's usually worth doing a "quick install"
+        // Heuristic: if we can afford 4 or more augs in the first ~10 minutes, it's usually worth doing a "quick install"
         // For example, in BN8, we get a big cash influx on each reset and can buy reputation immediately, so it's worth
         //     doing an few immediate installs to purchase upgrades, then reset for more free cash.
         // When in a gang, require a more augs and don't countdown as quickly, since each reset reduces gang member ascention multipliers
         const quickInstallThreshold = playerInGang ? 6 : 4;
         if (!inFirstBn9Aug && (
-            (getTimeInAug() < 20 * 60 * 1000 && pendingAugInclNfCount >= quickInstallThreshold) ||
+            (getTimeInAug() < 10 * 60 * 1000 && pendingAugInclNfCount >= quickInstallThreshold) ||
             // Heuristic: In BN8, reinstall repeatedly for the first 10 minutes to purchase every little thing we can with our flat 10B casino winnings
             (resetInfo.currentNode == 8 && getTimeInBitnode() < 10 * 60 * 1000))) {
             shouldReset = true;
