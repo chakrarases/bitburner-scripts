@@ -1,6 +1,6 @@
 {
   "first": [
-    "Tian Di Hui","Chongqing","Daedalus","BitRunners","The Black Hand"
+    "CyberSec","Tian Di Hui","Chongqing","Daedalus","BitRunners","The Black Hand"
   ],
   "pay-for-studies-threshold":2000000,
   "disable-treating-gang-as-sole-provider-of-its-augs":true,
