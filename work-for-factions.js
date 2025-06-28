@@ -1,5 +1,6 @@
 import {
     instanceCount, getConfiguration, getNsDataThroughFile, getFilePath, getActiveSourceFiles, tryGetBitNodeMultipliers,
+    formatDateTimeElaspe, formatDateTimeElaspe2,
     formatDuration, formatMoney, formatNumberShort, disableLogs, log, getErrorInfo, tail
 } from './helpers.js'
 
@@ -984,9 +985,14 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
             // Measure approximately how quickly we're gaining reputation to give a rough ETA
             const repGainRate = await measureFactionRepGainRate(ns, factionName);
             const eta_milliseconds = 1000 * (factionRepRequired - currentReputation) / repGainRate;
+            const dateETA = formatDateTimeElaspe(eta_milliseconds / 1000);
+            //const dateETA = formatDateTimeElaspe2(eta_milliseconds / 1000);
             ns.print(`${status} Currently at ${Math.round(currentReputation).toLocaleString('en')}, ` +
                 `earning ${formatNumberShort(repGainRate)} rep/sec. ` +
-                (hasFocusPenalty && !shouldFocus ? '(after 20% non-focus Penalty) ' : '') + `(ETA: ${formatDuration(eta_milliseconds)})`);
+                (hasFocusPenalty && !shouldFocus ? '(after 20% non-focus Penalty) ' : '') + 
+                `(ETA: ${formatDuration(eta_milliseconds)})` +
+                `(AT: ${dateETA})`
+                );
         }
         await tryBuyReputation(ns);
         await ns.sleep(loopSleepInterval);

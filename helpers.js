@@ -65,7 +65,58 @@ export function formatRam(num, printGB) {
 }
 
 /** Return a datatime in ISO format */
-export function formatDateTime(datetime) { return datetime.toISOString(); }
+export function formatDateTimeISO(datetime) { return datetime.toISOString(); }
+/** Return a datatime in string format */
+export function formatDateTime(datetime) { 
+  //const now = new Date();
+  const indatetime = Date(datetime);
+  //let hours = now.getHours();
+  return indatetime.toString();
+  //return datetime.toString();
+  }
+
+function pad_str(string, len) {
+	/*
+	Prepends the requested padding to the string.
+	*/
+	var pad = "                      "
+	return String(pad + string).slice(-len)
+}
+
+export function formatDateTimeElaspe(datetimeelaspe){
+  const now = new Date();
+  const portions = [];
+  let day = 0;
+  let hr = now.getHours();
+  let min = now.getMinutes();
+  let sec = now.getSeconds();
+  let ToToAdd = datetimeelaspe;
+  sec = sec + ToToAdd;
+  min = min + Math.floor(sec/60);
+  sec = Math.floor(sec % 60);
+  hr = hr + Math.floor(min/60);
+  min = min % 60;
+  day = Math.floor(hr/24);
+  hr = hr % 24;
+  portions.push(day.toString().padStart(2,'0'));
+  portions.push(hr.toString().padStart(2,'0'));
+  portions.push(min.toString().padStart(2,'0'));
+  portions.push(sec.toString().padStart(2,'0'));
+  return portions.join(':');
+}
+
+export function formatDateTimeElaspe2(datetimeelaspe){
+  let now = new Date();
+  //now = now + datetimeelaspe;
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numberic',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+  return formatter.format(now); 
+}
 
 /** Format a duration (in milliseconds) as e.g. '1h 21m 6s' for big durations or e.g '12.5s' / '23ms' for small durations */
 export function formatDuration(duration) {
