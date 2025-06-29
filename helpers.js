@@ -98,7 +98,7 @@ export function formatDateTimeElaspe(datetimeelaspe){
   min = min % 60;
   day = Math.floor(hr/24);
   hr = hr % 24;
-  portions.push(day.toString().padStart(2,'0'));
+  //portions.push(day.toString().padStart(2,'0'));
   portions.push(hr.toString().padStart(2,'0'));
   portions.push(min.toString().padStart(2,'0'));
   portions.push(sec.toString().padStart(2,'0'));

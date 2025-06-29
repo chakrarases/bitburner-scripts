@@ -33,3 +33,4 @@ alias knn="run knnhack.js";
 alias ck="ps -g scripts";
 alias txt="ls -g .txt";
 alias js="ls -g .js";
+alias fac="run faction-manager.js --all";
