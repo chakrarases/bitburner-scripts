@@ -259,7 +259,7 @@ export async function main(ns) {
             .filter(s => s.filename == scriptName && s.pid != ns.pid);
         if (competingDaemons.length > 0) { // We expect only 1, due to this logic, but just in case, generalize the code below to support multiple.
             const daemonPids = competingDaemons.map(p => p.pid);
-            log(ns, `Info: Killing another '${scriptName}' instance running on home (pid: ${daemonPids} args: ` +
+            log(ns, `INFO: Killing another '${scriptName}' instance running on home (pid: ${daemonPids} args: ` +
                 `[${competingDaemons[0].args.join(", ")}]) with new args ([${ns.args.join(", ")}])...`, true)
             const killPid = await killProcessIds(ns, daemonPids);
             await waitForProcessToComplete_Custom(ns, getHomeProcIsAlive(ns), killPid);
