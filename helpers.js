@@ -549,6 +549,11 @@ export function getErrorInfo(err) {
  * @param {int} */
 export function log(ns, message = "", alsoPrintToTerminal = false, toastStyle = "", maxToastLength = Number.MAX_SAFE_INTEGER) {
     checkNsInstance(ns, '"log"');
+    const insertionPosition = message.indexOf(":") + 1;
+    const firstPart = message.slice(0, insertionPosition);
+    const secondPart = message.slice(insertionPosition);
+    message = firstPart + " AT:" + formatDateTimeElaspe(0) + " " + secondPart;
+    //message = message + " AT:" + formatDateTimeElaspe(0);
     ns.print(message);
     if (toastStyle) ns.toast(message.length <= maxToastLength ? message : message.substring(0, maxToastLength - 3) + "...", toastStyle);
     if (alsoPrintToTerminal) {

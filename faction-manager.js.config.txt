@@ -40,5 +40,6 @@
     "SmartJaw",
     "PC Direct-Neural Interface NeuroNet Injector",
     "ECorp HVMind Implant"
-  ]
+  ],
+  "verbose":false
 }

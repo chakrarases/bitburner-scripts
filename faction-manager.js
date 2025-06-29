@@ -398,11 +398,11 @@ async function updateAugmentationData(ns) {
             if (!pa) return log(ns, `WARNING: Missing info about aug ${aug.name} prerequisite ${prereqName}. We likely don't have access.`);
             if (pa.owned) return;
             if (!pa.desired) {
-                log(ns, `INFO: Promoting aug "${prereqName}" to "desired" status, because desired aug "${aug.name}" depends on it.`);
+                //log(ns, `INFO: Promoting aug "${prereqName}" to "desired" status, because desired aug "${aug.name}" depends on it.`);
                 pa.desired = true;
             } // Also propagate the "priority" status to any dependencies of priority augs (dependency must be made a higher priority)
             if (priorityAugs.includes(aug.name) && !priorityAugs.includes(prereqName)) {
-                log(ns, `INFO: Promoting aug "${prereqName}" to "priority" status, because priority aug "${aug.name}" depends on it.`, true);
+                //log(ns, `INFO: Promoting aug "${prereqName}" to "priority" status, because priority aug "${aug.name}" depends on it.`, true);
                 priorityAugs.splice(priorityAugs.indexOf(aug.name), 0, prereqName);
             }
             propagateDesired(pa); // Recurse on any nested prerequisites of this prerequisite aug.

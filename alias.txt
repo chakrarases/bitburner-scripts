@@ -31,3 +31,5 @@ alias cas="run casino.js";
 alias asce="run ascend.js --install-augmentations --on-reset-script autopilot.js";
 alias knn="run knnhack.js";
 alias ck="ps -g scripts";
+alias txt="ls -g .txt";
+alias js="ls -g .js";

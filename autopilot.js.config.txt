@@ -3,5 +3,5 @@
     "install-at-aug-count":8,
     "install-at-aug-plus-nf-count":12,
     "xp-mode-interval-minutes":25,
-    "disable-rush-gangs":false
+    "disable-rush-gangs":true
 }

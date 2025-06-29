@@ -1,5 +1,6 @@
 import {
     log, getFilePath, getConfiguration, instanceCount, getNsDataThroughFile, runCommand, waitForProcessToComplete,
+    formatDateTimeElaspe,
     getActiveSourceFiles, tryGetBitNodeMultipliers, getStocksValue, unEscapeArrayArgs,
     formatMoney, formatDuration, formatNumber, getErrorInfo, tail
 } from './helpers.js'
@@ -843,7 +844,7 @@ export async function main(ns) {
         let totalCost = facman.total_rep_cost + facman.total_aug_cost;
         const augSummary = `${pendingAugCount} of ${facman.unpurchased_count - 1} remaining augmentations` + // Unowned - 1 because we can always buy more Neuroflux
             (pendingNfCount > 0 ? ` + ${pendingNfCount} levels of NeuroFlux.` : '.') +
-            (pendingAugCount > 0 ? `\n    Augs: [\"${augsToInstall.join("\", \"")}\"]` : '');
+            (pendingAugCount > 0 ? `\n    Augs: ${formatDateTimeElaspe(0)} [\"${augsToInstall.join("\", \"")}\"]` : '');
         let resetStatus = `Reserving ${formatMoney(totalCost)} to install ${augSummary}`
         let shouldReset = options['install-for-augs'].some(a => facman.affordable_augs.includes(a)) ||
             pendingAugCount >= augsNeeded || pendingAugInclNfCount >= augsNeededInclNf;
