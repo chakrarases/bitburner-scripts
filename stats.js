@@ -263,7 +263,8 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
     // Show various server / RAM utilization stats
     {
         const val1 = ["Servers"]
-        const val2 = ["Home RAM"]
+        const val2 = ["home RAM"]
+        const val21 = ["hAva RAM"]
         const val3 = ["All RAM"]
         if (!options['hide-RAM-utilization']) {
             const servers = await getAllServersInfo(ns);
@@ -278,6 +279,10 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
             // Add Home RAM and Utilization
             val2.push(true, `${formatRam(home.maxRam)} ${(100 * home.ramUsed / home.maxRam).toFixed(1)}%`,
                 `Shows total home RAM (and current utilization %)\nDetails: ${home.cpuCores} cores and using ` +
+                `${formatRam(home.ramUsed, true)} of ${formatRam(home.maxRam, true)} (${formatRam(home.maxRam - home.ramUsed, true)} free)`);
+            // Add HAva RAM
+            val21.push(true, `${formatRam(home.maxRam - home.ramUsed)} ${(100 * (home.maxRam - home.ramUsed) / home.maxRam).toFixed(1)}%`,
+                `Shows available home RAM (and available %)\nDetails: ${home.cpuCores} cores and using ` +
                 `${formatRam(home.ramUsed, true)} of ${formatRam(home.maxRam, true)} (${formatRam(home.maxRam - home.ramUsed, true)} free)`);
             // If the user has any scripts running on hacknet servers, assume they want them included in the main "total available RAM" stat
             const includeHacknet = hnServers.some(s => s.ramUsed > 0);
@@ -299,9 +304,10 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
         } else {
             val1.push(false)
             val2.push(false)
+            val21.push(false)
             val3.push(false)
         }
-        hudData.push(val1, val2, val3)
+        hudData.push(val1, val2, val21, val3)
     }
 
     // Show current share power

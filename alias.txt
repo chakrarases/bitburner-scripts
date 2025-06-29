@@ -29,3 +29,5 @@ alias git="run git-pull.js";
 alias baug="run faction-manager.js --purchase --ignore-stocks";
 alias cas="run casino.js";
 alias asce="run ascend.js --install-augmentations --on-reset-script autopilot.js";
+alias knn="run knnhack.js";
+alias ck="ps -g scripts";
