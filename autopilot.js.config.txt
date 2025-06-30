@@ -1,7 +1,7 @@
 {
-    "disable-auto-destroy-bn":true,
+    "disable-auto-destroy-bn":false,
     "install-at-aug-count":8,
     "install-at-aug-plus-nf-count":12,
     "xp-mode-interval-minutes":25,
-    "disable-rush-gangs":true
+    "disable-rush-gangs":false
 }
