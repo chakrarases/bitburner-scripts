@@ -649,8 +649,8 @@ export async function main(ns) {
     // Default work for faction args we think are ideal for speed-running BNs
     const workForFactionsArgs = [
       "--fast-crimes-only"
-      , // Essentially means we do mug until we can do homicide, then stick to homicide
-      "--get-invited-to-every-faction" // Join factions even we have all their augs. Good for having NeuroFlux providers
+      //, // Essentially means we do mug until we can do homicide, then stick to homicide
+      //"--get-invited-to-every-faction" // Join factions even we have all their augs. Good for having NeuroFlux providers
     ];
     // Relay the options to suppress tail windows and ignore bladeburner
     if (options['no-tail-windows']) workForFactionsArgs.push('--no-tail-windows');

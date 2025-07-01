@@ -1,3 +1,4 @@
 {
-  "min-shock-recovery":0
+  "min-shock-recovery":97,
+  "study-to-hacking": 9000
 }

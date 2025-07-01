@@ -22,24 +22,15 @@
   ],
   "aug-desired": [
     "CashRoot Starter Kit",
-    "Neuregen Gene Modification",
-    "Neuroreceptor Management Implant",
-    "Social Negotiation Assistant (S.N.A)",
-    "Neural-Retention Enhancement",
-    "CRTX42-AA Gene Modification",
-    "The Black Hand",
-    "Neural Accelerator",
-    "Cranial Signal Processors - Gen V",
-    "BitRunners Neurolink",
-    "OmniTek InfoLoad",
-    "nextSENS Gene Modification",
-    "Unstable Circadian Modulator",
-    "Neuronal Densification",
-    "Xanipher",
-    "QLink",
-    "SmartJaw",
-    "PC Direct-Neural Interface NeuroNet Injector",
-    "ECorp HVMind Implant"
+    "Neuregen Gene Modification"
+  ],
+  "ignore-faction": [
+    "Bachman & Associates","Netburners",
+    "The Dark Army","The Syndicate","Speakers for the Dead",
+    "Fulcrum Secret Technologies","ECorp",
+    "Clarke Incorporated","OmniTek Incorporated","NWO",
+    "Blade Industries","MegaCorp","KuaiGong International",
+    "Four Sigma","Volhaven"
   ],
   "v":false
 }
