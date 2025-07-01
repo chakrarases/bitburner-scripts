@@ -33,7 +33,7 @@
     "Clarke Incorporated","OmniTek Incorporated","NWO",
     "Blade Industries","MegaCorp","KuaiGong International","Four Sigma",
     "Silhouette",
-    "Volhaven"
+    "Aevum","Volhaven"
   ],
   "v":false
 }
