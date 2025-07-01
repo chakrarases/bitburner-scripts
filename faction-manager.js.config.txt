@@ -21,6 +21,7 @@
     "ECorp HVMind Implant"
   ],
   "aug-desired": [
+    "The Red Pill",
     "CashRoot Starter Kit",
     "Neuregen Gene Modification"
   ],
