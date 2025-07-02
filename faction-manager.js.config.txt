@@ -22,8 +22,7 @@
   ],
   "aug-desired": [
     "The Red Pill",
-    "CashRoot Starter Kit",
-    "Neuregen Gene Modification"
+    "CashRoot Starter Kit"
   ],
   "ignore-faction": [
     "Illuminati",

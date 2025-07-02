@@ -1,6 +1,6 @@
 {
   "first": [
-    "CyberSec","NiteSec","Tian Di Hui","Chongqing","Daedalus","BitRunners","The Black Hand"
+    "CyberSec","NiteSec","Daedalus","BitRunners","The Black Hand"
   ],
   "skip": [
     "Illuminati",
