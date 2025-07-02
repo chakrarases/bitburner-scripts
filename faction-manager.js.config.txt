@@ -8,31 +8,16 @@
     "CRTX42-AA Gene Modification",
     "The Black Hand",
     "Neural Accelerator",
+    "SmartJaw",
     "Cranial Signal Processors - Gen V",
     "BitRunners Neurolink",
+    "QLink",
+    "ECorp HVMind Implant",
     "OmniTek InfoLoad",
     "nextSENS Gene Modification",
     "Unstable Circadian Modulator",
     "Neuronal Densification",
     "Xanipher",
-    "QLink",
-    "SmartJaw",
-    "PC Direct-Neural Interface NeuroNet Injector",
-    "ECorp HVMind Implant"
-  ],
-  "aug-desired": [
-    "The Red Pill",
-    "CashRoot Starter Kit"
-  ],
-  "ignore-faction": [
-    "Illuminati",
-    "The Syndicate","Speakers for the Dead",
-    "The Dark Army","Tetrads",
-    "Bachman & Associates","Fulcrum Secret Technologies","ECorp",
-    "Clarke Incorporated","OmniTek Incorporated","NWO",
-    "Blade Industries","MegaCorp","KuaiGong International","Four Sigma",
-    "Silhouette",
-    "Aevum","Volhaven"
-  ],
-  "v":false
+    "PC Direct-Neural Interface NeuroNet Injector"
+  ]
 }

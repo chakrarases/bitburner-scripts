@@ -1,4 +1,5 @@
 {
+    "next-bn":0,
     "disable-auto-destroy-bn":false,
     "install-at-aug-count":8,
     "install-at-aug-plus-nf-count":12,
