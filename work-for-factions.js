@@ -988,7 +988,7 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
       const dateETA = formatDateTimeElaspe(eta_milliseconds / 1000);
       //const dateETA = formatDateTimeElaspe2(eta_milliseconds / 1000);
       ns.print(`${status} Currently at ${Math.round(currentReputation).toLocaleString('en')}, ` +
-        `earning ${formatNumberShort(repGainRate)} rep/sec. ` +
+        `earning ${formatNumberShort(repGainRate)} r/s ` +
         (hasFocusPenalty && !shouldFocus ? '(after 20% non-focus Penalty) ' : '') +
         `(ETA: ${formatDuration(eta_milliseconds)})` +
         `(AT: ${dateETA})`
@@ -1287,7 +1287,7 @@ export async function workForMegacorpFactionInvite(ns, factionName, waitForInvit
       const eta = !isWorking ? "?" : formatDuration(1000 * ((requiredRep || repRequiredForFaction) - currentReputation) / repGainRate);
       const dateETA = formatDateTimeElaspe(((requiredRep || repRequiredForFaction) - currentReputation) / repGainRate);
       player = await getPlayerInfo(ns);
-      ns.print(`Currently a "${player.jobs[companyName]}" ('${currentRole}' #${currentJobTier}) for "${companyName}" earning ${formatNumberShort(repGainRate)} rep/sec. ` +
+      ns.print(`Currently a "${player.jobs[companyName]}" ('${currentRole}' #${currentJobTier}) for "${companyName}" earning ${formatNumberShort(repGainRate)} r/s ` +
         (hasFocusPenalty && !shouldFocus ? `(after 20% non-focus Penalty)` : '') + `\n` +
         `${status}\nCurrent player stats are Hack:${player.skills.hacking} ${player.skills.hacking >= (requiredHack || 0) ? '✓' : '✗'} ` +
         `Cha:${player.skills.charisma} ${player.skills.charisma >= (requiredCha || 0) ? '✓' : '✗'} ` +
