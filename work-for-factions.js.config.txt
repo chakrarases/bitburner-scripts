@@ -7,6 +7,6 @@
     "The Dark Army","Tetrads","Slum Snakes"
   ],
   "pay-for-studies-threshold":200000,
-  "disable-treating-gang-as-sole-provider-of-its-augs":true,
+  "disable-treating-gang-as-sole-provider-of-its-augs":false,
   "training-stat-per-multi-threshold": 300
 }
