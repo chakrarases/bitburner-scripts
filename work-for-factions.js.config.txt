@@ -8,5 +8,5 @@
   ],
   "pay-for-studies-threshold":200000,
   "disable-treating-gang-as-sole-provider-of-its-augs":false,
-  "training-stat-per-multi-threshold": 300
+  "training-stat-per-multi-threshold": 100
 }
