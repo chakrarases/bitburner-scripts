@@ -1,8 +1,9 @@
 {
   "first": [
     "CyberSec","NiteSec","Daedalus","BitRunners","The Black Hand",
+    "Bachman & Associates",
     "Tian Di Hui","Chongqing",
-    "Bachman & Associates","ECorp","Fulcrum Secret Technologies",
+    "ECorp","Fulcrum Secret Technologies",
     "Speakers for the Dead","The Syndicate",
     "The Dark Army","Tetrads","Slum Snakes"
   ],
