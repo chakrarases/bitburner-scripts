@@ -171,6 +171,34 @@ export function formatDuration2(duration) {
   return portions.join('');
 }
 
+export function formatDuration3(duration) {
+  if (duration < 1000) return `${duration.toFixed(0)}ms`
+  if (!isFinite(duration)) return 'forever (Infinity)'
+  const portions = [];
+  const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+    portions.push(days.toString().padStart(2, '0') + ' ');
+  if (days > 0) {
+    //portions.push(days.toString().padStart(2, '0') + 'd');
+    duration -= (days * msInDay);
+  }
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+    portions.push(hours.toString().padStart(2, '0') + ':');
+  if (hours > 0) {
+    //portions.push(hours.toString().padStart(2, '0') + 'h');
+    duration -= (hours * msInHour);
+  }
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+    portions.push(minutes.toString().padStart(2, '0') + '');
+  if (minutes > 0) {
+    //portions.push(minutes.toString().padStart(2, '0') + 'm');
+    duration -= (minutes * msInMinute);
+  }
+  return portions.join('');
+}
+
 /** Generate a hashCode for a string that is pretty unique most of the time */
 export function hashCode(s) { return s.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0); }
 

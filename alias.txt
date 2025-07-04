@@ -34,3 +34,7 @@ alias ck="ps -g scripts";
 alias txt="ls -g .txt";
 alias js="ls -g .js";
 alias fac="run faction-manager.js --all";
+alias g=grow;
+alias ana=analyze;
+alias stat="kill stats.js ; run stats.js";
+alias reau="kill autopilot.js ; run autopilot.js";

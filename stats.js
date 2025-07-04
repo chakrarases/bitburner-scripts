@@ -1,5 +1,5 @@
 import {
-  log, disableLogs, instanceCount, getConfiguration, getNsDataThroughFile, getActiveSourceFiles, formatDuration2,
+  log, disableLogs, instanceCount, getConfiguration, getNsDataThroughFile, getActiveSourceFiles, formatDuration2, formatDuration3,
   getStocksValue, formatNumberShort, formatMoney, formatRam, getFilePath
 } from './helpers.js'
 
@@ -139,7 +139,7 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
   // Show what bitNode we're currently playing in
   // Show Augment installed Time passed and Show bitNode Time passed
   {
-    const val = ["BitNode", true, `${bitNode}.${1 + (dictSourceFiles[bitNode] || 0)}`+" A"+`${formatDuration2(getTimeInAug())}`+"B"+`${formatDuration2(getTimeInBitnode())}`,
+    const val = ["BitNode", true, `${bitNode}.${1 + (dictSourceFiles[bitNode] || 0)}`+" A"+`${formatDuration3(getTimeInAug())}`+" B"+`${formatDuration3(getTimeInBitnode())}`,
       `Detected as being one more than your current owned SF level (${dictSourceFiles[bitNode] || 0}) in the current bitnode (${bitNode}).`]
     hudData.push(val)
   }
