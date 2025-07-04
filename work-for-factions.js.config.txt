@@ -1,8 +1,10 @@
 {
   "first": [
-    "CyberSec","NiteSec","Daedalus","BitRunners","The Black Hand",
+    "Tian Di Hui","CyberSec","NiteSec",
     "Bachman & Associates",
-    "Tian Di Hui","Chongqing","New Tokyo","Sector-12","Ishima",
+    "Daedalus",
+    "BitRunners","The Black Hand",
+    "Chongqing","New Tokyo","Sector-12","Ishima",
     "Tetrads","Slum Snakes"
   ],
   "skip": [
@@ -12,7 +14,8 @@
     "Fulcrum Secret Technologies","ECorp",
     "Clarke Incorporated","OmniTek Incorporated","NWO",
     "Blade Industries","MegaCorp","KuaiGong International",
-    "Four Sigma"
+    "Four Sigma",
+    "Silhouette"
   ],
   "pay-for-studies-threshold":200000,
   "disable-treating-gang-as-sole-provider-of-its-augs":false,

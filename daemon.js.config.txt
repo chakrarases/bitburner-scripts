@@ -1,8 +1,9 @@
-{ 
-    "disable-script": [
-        "sleeve.js",
-        "gangs.js"
-    ],
-    "reserved-ram": 32,
-    "silent-misfires": true
+{
+	"disable-script": [
+		"bladeburner.js",
+		"sleeve.js",
+		"gangs.js"
+	],
+	"reserved-ram": 32,
+	"silent-misfires": true
 }

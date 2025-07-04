@@ -1,9 +1,10 @@
 {
   "priority-aug": [
+    "ADR-V1 Pheromone Gene",
     "CashRoot Starter Kit",
-    "Neuregen Gene Modification",
-    "Neuroreceptor Management Implant",
     "Social Negotiation Assistant (S.N.A)",
+    "Neuroreceptor Management Implant",
+    "Neuregen Gene Modification",
     "Neural-Retention Enhancement",
     "CRTX42-AA Gene Modification",
     "The Black Hand",
