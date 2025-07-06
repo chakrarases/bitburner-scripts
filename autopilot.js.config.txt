@@ -1,15 +1,12 @@
 {
 	"next-bn":0,
 	"disable-auto-destroy-bn":false,
-	"install-at-aug-count":4,
-	"install-at-aug-plus-nf-count":4,
+	"install-at-aug-count":6,
+	"install-at-aug-plus-nf-count":10,
 	"install-for-augs":[
 		"The Red Pill",
-		"CashRoot Starter Kit",
-		"Social Negotiation Assistant (S.N.A)",
 		"Neuregen Gene Modification",
 		"Neuroreceptor Management Implant",
-		"CRTX42-AA Gene Modification",
 		"SmartJaw",
 		"Cranial Signal Processors - Gen V",
 		"BitRunners Neurolink",
