@@ -38,3 +38,4 @@ alias g=grow;
 alias ana=analyze;
 alias stat="kill stats.js ; run stats.js";
 alias reau="kill autopilot.js ; run autopilot.js";
+alias msh="run mshack/masterHack.js";

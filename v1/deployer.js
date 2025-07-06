@@ -28,6 +28,8 @@ export async function main(ns) {
       ns.scp(["/self/selfweak.js", "/self/selfgrow.js", "/self/selfhack.js"], server);
       ns.scp(["/shared/weaken.js", "/shared/grow.js", "/shared/hack.js"], server);
       ns.scp(["/param/weak.js", "/param/grow.js", "/param/hack.js"], server);
+      ns.scp(["/mshack/weakms.js", "/mshack/growms.js", "/mshack/hackms.js"], server);
+      ns.scp(["/mshack/nuke.js", "/mshack/masterHack.js"], server);
       ns.scp(["/shared/ramshare.js","gs.js","/v2/home1hwgw.js"], server);
       ns.scp(["/v4/exphack.js"], server);
   
