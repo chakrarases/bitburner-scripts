@@ -9,6 +9,22 @@ const trainSmarts = ['hacking', 'charisma'];
 let numSleeves;
 let ownedSourceFiles;
 
+/*
+alias sles="run sleeve_short.js";
+sles com
+sles alg
+sles led
+sles r
+sles i
+sles m
+sles h
+sles str
+sles def
+sles dex
+sles agi
+*/
+
+
 /** @param {NS} ns **/
 export async function main(ns) {
   ownedSourceFiles = await getActiveSourceFiles(ns);
@@ -42,24 +58,33 @@ async function mainLoop(ns) {
   for (let i = 0; i < numSleeves; i++) {
     let sleeve = sleeveInfo[i]; // For convenience, merge all sleeve stats/info into one object
 
-    if ((ns.args[0] == "algorithms") || (ns.args[0] == "leadership") || (ns.args[0] == "computer science")) { //University
+    if ((ns.args[0] == "alg") || (ns.args[0] == "led") || (ns.args[0] == "com")) { //University
       if (sleeve.city != ns.enums.CityName.Volhaven) {
         log(ns, `Moving Sleeve ${i} from ${sleeve.city} to Volhaven so that they can study at ZB Institute.`);
         await getNsDataThroughFile(ns, `ns.sleeve.travel(ns.args[0], ns.args[1])`, null, [i, ns.enums.CityName.Volhaven]);
       }
       var univ = ns.enums.LocationName.VolhavenZBInstituteOfTechnology;
-      let result = await getNsDataThroughFile(ns, `ns.sleeve.setToUniversityCourse(ns.args[0], ns.args[1], ns.args[2])`, `/Temp/Sleeve_short_univ.txt`, [i, univ, ns.args[0]]);
-			//ns.sleeve.setToUniversityCourse(i, univ, ns.args[0]);
-    } else if (ns.args[0] == "recovery") { //set to ShockRecovery
+      if (ns.args[0] == "alg") {
+        let result = await getNsDataThroughFile(ns, `ns.sleeve.setToUniversityCourse(ns.args[0], ns.args[1], ns.args[2])`, `/Temp/Sleeve_short_univ.txt`, [i, univ, "algorithms"]);
+      } else if (ns.args[0] == "led") {
+        let result = await getNsDataThroughFile(ns, `ns.sleeve.setToUniversityCourse(ns.args[0], ns.args[1], ns.args[2])`, `/Temp/Sleeve_short_univ.txt`, [i, univ, "leadership"]);
+      } else if (ns.args[0] == "com") {
+        let result = await getNsDataThroughFile(ns, `ns.sleeve.setToUniversityCourse(ns.args[0], ns.args[1], ns.args[2])`, `/Temp/Sleeve_short_univ.txt`, [i, univ, "computer science"]);
+      }
+      //ns.sleeve.setToUniversityCourse(i, univ, ns.args[0]);
+    } else if (ns.args[0] == "r") { //set to ShockRecovery
       let result = await getNsDataThroughFile(ns, `ns.sleeve.setToShockRecovery(ns.args[0])`, null, [i]);
       //ns.sleeve.setToShockRecovery(i);
-    } else if (ns.args[0] == "idle") { //set to Idle
+    } else if (ns.args[0] == "i") { //set to Idle
       let result = await getNsDataThroughFile(ns, `ns.sleeve.setToIdle(ns.args[0])`, null, [i]);
       //ns.sleeve.setToIdle(i);
-		} else if (ns.args[0] == "homicide") {
-			let result = await getNsDataThroughFile(ns, `ns.sleeve.setToCommitCrime(ns.args[0], ns.args[1])`, `/Temp/Sleeve_short_crime.txt`, [i, ns.args[0]]);
-			//ns.sleeve.setToCommitCrime(i, ns.args[0]);
-		} else { //Gym
+    } else if (ns.args[0] == "m") {
+      let result = await getNsDataThroughFile(ns, `ns.sleeve.setToCommitCrime(ns.args[0], ns.args[1])`, `/Temp/Sleeve_short_crime.txt`, [i, "mug"]);
+      //ns.sleeve.setToCommitCrime(i, ns.args[0]);
+    } else if (ns.args[0] == "h") {
+      let result = await getNsDataThroughFile(ns, `ns.sleeve.setToCommitCrime(ns.args[0], ns.args[1])`, `/Temp/Sleeve_short_crime.txt`, [i, "homicide"]);
+      //ns.sleeve.setToCommitCrime(i, ns.args[0]);
+    } else { //Gym
       if (sleeve.city != ns.enums.CityName.Sector12) {
         log(ns, `Moving Sleeve ${i} from ${sleeve.city} to Sector-12 so that they can study at Powerhouse Gym.`);
         await getNsDataThroughFile(ns, 'ns.sleeve.travel(ns.args[0], ns.args[1])', null, [i, ns.enums.CityName.Sector12]);
