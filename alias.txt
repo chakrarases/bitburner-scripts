@@ -39,3 +39,5 @@ alias ana=analyze;
 alias stat="kill stats.js ; run stats.js";
 alias reau="kill autopilot.js ; run autopilot.js";
 alias msh="run mshack/masterHack.js";
+alias kiau="kill autopilot.js";
+alias sles="run sleeve_short.js";
