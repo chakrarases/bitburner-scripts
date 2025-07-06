@@ -44,6 +44,7 @@ export function autocomplete(data, args) {
  * @param {NS} ns **/
 export async function main(ns) {
   const persistentLog = "log.autopilot.txt";
+  const persistentBNLog = "log.BN.autopilot.txt";
   const factionManagerOutputFile = "/Temp/affordable-augs.txt"; // Temp file produced by faction manager with status information
   const defaultBnOrder = [ // The order in which we intend to play bitnodes
     // 1st Priority: Key new features and/or major stat boosts
@@ -380,6 +381,7 @@ export async function main(ns) {
         `${formatDuration(getTimeInBitnode())} ` +
         `(${(player.skills.hacking >= wdHack ? `hack (${wdHack.toFixed(0)})` : 'bladeburner')} win condition)`;
       persist_log(ns, text);
+      persist_BN_log(ns, text);
       log(ns, `SUCCESS: ${text}`, true, 'success');
       loggedBnCompletion = true; // Flag set to ensure that if we choose to stay in the BN, we only log the "BN completed" message once per reset.
     }
@@ -1113,6 +1115,12 @@ export async function main(ns) {
    * @param {NS} ns */
   function persist_log(ns, text) {
     ns.write(persistentLog, `${(new Date()).toISOString().substring(0, 19)} ${text}\n`, "a")
+  }
+
+  /** Append the specified text (with timestamp) to a persistent BN finished log in the home directory
+   * @param {NS} ns */
+  function persist_BN_log(ns, text) {
+    ns.write(persistentBNLog, `${(new Date()).toISOString().substring(0, 19)} ${text}\n`, "a")
   }
 
   let logged_once = new Set();
