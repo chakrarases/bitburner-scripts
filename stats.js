@@ -201,8 +201,11 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 
 	// Show gang income and territory
 	{
-		const val1 = ["Gang Inc"]
-		const val2 = ["Territory"]
+		const val1 = ["Gang Incre"]
+		const val2 = ["Gang Terri"]
+		const val3 = ["Gang Power"]
+		const val4 = ["Gang Reput"]
+		const val5 = ["Gang TClsh"]
 		// Gang income is only relevant once gangs are unlocked
 		if ((2 in dictSourceFiles || 2 == bitNode) && gangInfo) {
 			// Add Gang Income
@@ -217,11 +220,18 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 				`Gang: ${gangInfo.faction} ${gangInfo.isHacking ? "(Hacking)" : "(Combat)"}  ` +
 				`Power: ${gangInfo.power.toLocaleString('en')}  Clash ${gangInfo.territoryWarfareEngaged ? "enabled" : "disabled"} ` +
 				`(${(gangInfo.territoryClashChance * 100).toFixed(0)}% chance)`);
+			val3.push(true, formatNumberShort(gangInfo.power, 6, 2));
+			let currentReputation = await getFactionReputation(ns, gangInfo.faction);
+			val4.push(true, `${formatNumberShort(currentReputation)}`);
+			val5.push(true, `${formatNumberShort(gangInfo.territoryClashChance * 100, 6, 2)}%`);
 		} else {
 			val1.push(false)
 			val2.push(false)
+			val3.push(false)
+			val4.push(false)
+			val5.push(false)
 		}
-		hudData.push(val1, val2)
+		hudData.push(val1, val2, val3, val4, val5)
 	}
 
 	// Show Karma if we're not in a gang yet
@@ -264,7 +274,7 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 			val1.push(true, formatSixSigFigs(bbRank), "Your current bladeburner rank");
 			val2.push(true, formatSixSigFigs(bbSP), "Your current unspent bladeburner skill points");
 			let currentReputation = await getFactionReputation(ns, "Bladeburners");
-			val3.push(true, `${Math.round(currentReputation).toLocaleString('en')}`);
+			val3.push(true, `${formatNumberShort(currentReputation)}`);
 		} else {
 			val1.push(false)
 			val2.push(false)
@@ -369,17 +379,17 @@ function addCSS(doc) {
 	doc.head.insertAdjacentHTML('beforeend', css(hudParent ? eval('window').getComputedStyle(hudParent) : null));
 }
 const css = (rootStyle) => `<style id="statsCSS">
-		.MuiTooltip-popper { z-index: 10001 } /* Sadly, not parented by its owners, so must be updated with MuiCollapse-root's parent */
-		.tooltip  { margin: 0; position: relative; }
-		.tooltip.hidden { display: none; }
-		.tooltip:hover .tooltiptext { visibility: visible; opacity: 0.85; }
-		.tooltip .tooltiptext {
-				visibility: hidden; position: absolute; z-index: 1;
-				right: 20px; top: 19px; padding: 2px 10px;
-				text-align: right; white-space: pre;
-				border-radius: 6px; border: ${rootStyle?.border || "inherit"};
-				background-color: ${rootStyle?.backgroundColor || "#900C"};
-		}
+    .MuiTooltip-popper { z-index: 10001 } /* Sadly, not parented by its owners, so must be updated with MuiCollapse-root's parent */
+    .tooltip  { margin: 0; position: relative; }
+    .tooltip.hidden { display: none; }
+    .tooltip:hover .tooltiptext { visibility: visible; opacity: 0.85; }
+    .tooltip .tooltiptext {
+        visibility: hidden; position: absolute; z-index: 1;
+        right: 20px; top: 19px; padding: 2px 10px;
+        text-align: right; white-space: pre;
+        border-radius: 6px; border: ${rootStyle?.border || "inherit"};
+        background-color: ${rootStyle?.backgroundColor || "#900C"};
+    }
 </style>`;
 
 /** @param {NS} ns
