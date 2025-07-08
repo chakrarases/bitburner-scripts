@@ -1,8 +1,8 @@
 {
 	"next-bn": 0,
 	"disable-auto-destroy-bn": false,
-	"install-at-aug-count": 8,
-	"install-at-aug-plus-nf-count": 12,
+	"install-at-aug-count": 6,
+	"install-at-aug-plus-nf-count": 10,
 	"install-for-augs":[
 		"The Red Pill",
 		"Neuregen Gene Modification",
@@ -19,6 +19,7 @@
 		"Xanipher",
 		"PC Direct-Neural Interface NeuroNet Injector"
 	],
+	"install-countdown": 50,
 	"disable-rush-gangs": false,
 	"disable-bladeburner": false,
 	"xp-mode-interval-minutes": 25

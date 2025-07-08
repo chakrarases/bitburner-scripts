@@ -1,6 +1,6 @@
 {
   "first": [
-    "CyberSec","Tian Di Hui","Daedalus","BitRunners",
+    "Tian Di Hui","CyberSec","Daedalus","BitRunners",
     "Chongqing","The Black Hand","NiteSec",
     "New Tokyo","Sector-12","Ishima",
     "Tetrads","Slum Snakes","The Dark Army",
