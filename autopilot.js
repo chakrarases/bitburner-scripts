@@ -297,6 +297,7 @@ export async function main(ns) {
 		// Remaining logic below is for rushing a Daedalus invite in the current reset
 		const totalWorth = player.money + stocksValue;
 		// Check for sufficient hacking level before attempting to reserve money
+		
 		if (player.skills.hacking < 2500) {
 			// If we happen to already have enough money for daedalus and are only waiting on hack-level,
 			// set a flag to switch daemon.js into --xp-only mode, to prioritize earning hack exp over money
@@ -958,6 +959,9 @@ export async function main(ns) {
 	 *           total_rep_cost: number, total_aug_cost: number, unowned_count: number }} facmanOutput
 	*/
 	async function shouldDelayInstall(ns, player, facmanOutput) {
+		// Don't install if we're currently working on company
+		if (await checkIfCompanyWorking(ns, player))
+			return true;
 		// Don't install if we're currently grafting an augmentation
 		if (await checkIfGrafting(ns))
 			return true;
@@ -1016,6 +1020,25 @@ export async function main(ns) {
 		// TODO: Bladeburner black-op in progress
 		// TODO: Close to the rep needed for unlocking donations with a new faction?
 		return false;
+	}
+
+	let wasCompanyWorking = false;
+
+	/** Checks if we are current company working. If so, certain actions should not be taken.
+	 * @param {NS} ns
+	 * @param {Player} player
+	 * @returns {bool} true if the player is company working, false otherwise. */
+	async function checkIfCompanyWorking(ns, player) {
+		let currentWork = (/**@returns{Task|null}*/() => null)();
+		currentWork = await getNsDataThroughFile(ns, 'ns.singularity.getCurrentWork()');
+		// Never interrupt company working
+		if (currentWork?.type == "COMPANY" && player.skills.hacking >= 725 && player.skills.charisma >= 475) {
+			if (!wasCompanyWorking) // Only log the first time we detect we've started company working
+				log(ns, "Company Working in progress. autopilot.js will make sure to not install augmentations or otherwise interrupt it.");
+			return wasCompanyWorking = true;
+		}
+		else
+			return wasCompanyWorking = false
 	}
 
 	let wasGrafting = false;

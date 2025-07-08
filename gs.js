@@ -1,11 +1,15 @@
+import {
+	formatMoney
+} from './helpers.js'
+
 /** 
  * @param {NS} ns 
  **/
- /*
+/*
 Gets stats of each hacked server.
 RAM: 2.55GB
- */
-function get_all_servers(ns, all=false) {
+*/
+function get_all_servers(ns, all = false) {
 	/*
 	Scans and iterates through all servers.
 	If all is false, only servers with root access and have money are returned.
@@ -57,22 +61,22 @@ function get_server_data(ns, server) {
 	However, ns.getServer() costs 2GB, which doubles the RAM requirement for this script.
 	*/
 	var moneyAvailable = ns.getServerMoneyAvailable(server)
-	var moneyMax =  ns.getServerMaxMoney(server)
+	var moneyMax = ns.getServerMaxMoney(server)
 	var securityLvl = ns.getServerSecurityLevel(server)
 	var securityMin = ns.getServerMinSecurityLevel(server)
 	var ram = ns.getServerMaxRam(server)
-  var hackLvl = ns.getServerRequiredHackingLevel(server)
-  var growth = ns.getServerGrowth(server)
-  var core = ns.getServer(server).cpuCores;
+	var hackLvl = ns.getServerRequiredHackingLevel(server)
+	var growth = ns.getServerGrowth(server)
+	var core = ns.getServer(server).cpuCores;
 
-	return `${pad_str(server, 20)}`+
-			` $:${pad_str(parseInt(moneyAvailable), 12)}/${pad_str(parseInt(moneyMax), 12)}(${pad_str((moneyAvailable / moneyMax).toFixed(2), 4)})` +
-			` Sec:${pad_str(securityLvl.toFixed(2), 6)}(${pad_str(securityMin, 2)})` +
-			` RAM:${pad_str(parseInt(ram), 4)}` +
-			` Act:${pad_str(get_action(ns, server),7)}` +
-      ` H:${pad_str(hackLvl, 4)}` +
-      ` G:${pad_str(growth, 2)}` +
-      ` C:${pad_str(core, 2)}`
+	return `${pad_str(server, 20)}` +
+		` $:${pad_str(formatMoney(moneyAvailable, 3, 2), 7)}/${pad_str(formatMoney(moneyMax, 3, 2), 7)}(${pad_str((moneyAvailable / moneyMax).toFixed(2), 4)})` +
+		` Sec:${pad_str(securityLvl.toFixed(2), 6)}(${pad_str(securityMin, 2)})` +
+		` RAM:${pad_str(parseInt(ram), 4)}` +
+		` Act:${pad_str(get_action(ns, server), 7)}` +
+		` H:${pad_str(hackLvl, 4)}` +
+		` G:${pad_str(growth, 2)}` +
+		` C:${pad_str(core, 2)}`
 }
 
 function get_servers(ns) {
@@ -99,7 +103,7 @@ export async function main(ns) {
 	var keys = Object.keys(stats)
 	keys.sort((a, b) => a - b)
 	// Print the results
-	for (var i in keys){
+	for (var i in keys) {
 		var key = keys[i]
 		ns.tprint(stats[key])
 	}
