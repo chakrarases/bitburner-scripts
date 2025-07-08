@@ -1,17 +1,17 @@
 {
   "first": [
-    "Tian Di Hui","CyberSec","BitRunners",
-    "Bachman & Associates",
-    "Daedalus",
-    "NiteSec","The Black Hand",
-    "Chongqing","New Tokyo","Sector-12","Ishima",
+    "Tian Di Hui","CyberSec","Daedalus","BitRunners",
+    "Chongqing","The Black Hand","NiteSec",
+    "New Tokyo","Sector-12","Ishima",
+    "ECorp",
     "Tetrads","Slum Snakes"
   ],
   "skip": [
     "Volhaven","Aevum",
     "Tetrads","Slum Snakes","The Dark Army",
     "The Syndicate","Speakers for the Dead",
-    "Fulcrum Secret Technologies","ECorp",
+    "Bachman & Associates",
+		"Fulcrum Secret Technologies",
     "Clarke Incorporated","OmniTek Incorporated","NWO",
     "Blade Industries","MegaCorp","KuaiGong International",
     "Four Sigma",
