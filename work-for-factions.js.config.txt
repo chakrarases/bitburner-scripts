@@ -5,7 +5,6 @@
     "New Tokyo","Sector-12","Ishima",
     "Tetrads","Slum Snakes","The Dark Army",
     "The Syndicate","Speakers for the Dead",
-		"Silhouette",
 		"The Covenant",
     "Illuminati"
   ],
