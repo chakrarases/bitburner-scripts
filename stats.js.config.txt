@@ -1,3 +1,4 @@
 {
-  "show-peoplekilled":false
+  "show-peoplekilled":false,
+  "BNLabel": "Chak BN"
 }

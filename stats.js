@@ -4,9 +4,10 @@ import {
 } from './helpers.js'
 
 const argsSchema = [
-	['show-peoplekilled', false],
-	['hide-stocks', false],
-	['hide-RAM-utilization', false],
+	['show-peoplekilled', false], //
+	['hide-stocks', false], //
+	['hide-RAM-utilization', false], //
+	['BNLabel', "ChakraS"], //BitNode Label
 ];
 
 export function autocomplete(data, args) {
@@ -139,7 +140,11 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 	// Show what bitNode we're currently playing in
 	// Show Augment installed Time passed and Show bitNode Time passed
 	{
-		const val = ["ChakraS", true, `${bitNode}.${1 + (dictSourceFiles[bitNode] || 0)}` + " A" + `${formatDuration3(getTimeInAug())}` + " B" + `${formatDuration3(getTimeInBitnode())}`,
+		const strBN = "ChakraS"
+		if (options['BNLabel']!=""){
+			const strBN = options['BNLabel'];
+		}
+		const val = [strBN, true, `${bitNode}.${1 + (dictSourceFiles[bitNode] || 0)}` + " A" + `${formatDuration3(getTimeInAug())}` + " B" + `${formatDuration3(getTimeInBitnode())}`,
 			`Detected as being one more than your current owned SF level (${dictSourceFiles[bitNode] || 0}) in the current bitnode (${bitNode}).`]
 		hudData.push(val)
 	}
