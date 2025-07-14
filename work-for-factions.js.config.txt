@@ -19,6 +19,6 @@
     "Illuminati"
   ],
   "pay-for-studies-threshold":200000,
-  "disable-treating-gang-as-sole-provider-of-its-augs":false,
+  "disable-treating-gang-as-sole-provider-of-its-augs":true,
   "training-stat-per-multi-threshold": 100
 }
