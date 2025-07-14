@@ -1015,8 +1015,8 @@ export async function main(ns) {
 		}
 
 		// Don't install if we're currently working on faction
-		if (await checkIfFactionWorking(ns, player))
-			return true;
+		//if (await checkIfFactionWorking(ns, player))
+			//return true;
 		// Don't install if we're currently working on company
 		if (await checkIfCompanyWorking(ns, player))
 			return true;

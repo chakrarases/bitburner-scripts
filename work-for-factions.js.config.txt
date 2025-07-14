@@ -2,11 +2,7 @@
   "first": [
     "Tian Di Hui","CyberSec","Daedalus","BitRunners",
     "Chongqing","The Black Hand","NiteSec",
-    "New Tokyo","Sector-12","Ishima",
-    "Tetrads","Slum Snakes","The Dark Army",
-    "The Syndicate","Speakers for the Dead",
-		"The Covenant",
-    "Illuminati"
+    "New Tokyo","Sector-12","Ishima"
   ],
   "skip": [
     "Volhaven","Aevum",
