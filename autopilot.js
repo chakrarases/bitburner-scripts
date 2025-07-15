@@ -1035,11 +1035,12 @@ export async function main(ns) {
 	async function checkIfCompanyWorking(ns, player) {
 		let currentWork = (/**@returns{Task|null}*/() => null)();
 		currentWork = await getNsDataThroughFile(ns, 'ns.singularity.getCurrentWork()');
-		let currentWorkRep = (/**@returns{number|null}*/() => null)();
-		currentWorkRep = await getNsDataThroughFile(ns, 'ns.singularity.getCompanyRep(ns.args[0])', null, [currentWork?.companyName]);
+		//let currentWorkRep = (/**@returns{number|null}*/() => null)();
+		//currentWorkRep = await getNsDataThroughFile(ns, 'ns.singularity.getCompanyRep(ns.args[0])', null, [currentWork?.companyName]);
 		//ns.tprint("Comp:"+ currentWork?.companyName +" Rep:"+currentWorkRep);
 		// Never interrupt company working
-		if (currentWork?.type == "COMPANY" && player.skills.hacking >= 300 && player.skills.charisma >= 150 && currentWorkRep >= 250000) { // More skill means more rep/sec, if low skill == no need to wait
+		//if (currentWork?.type == "COMPANY" && player.skills.hacking >= 300 && player.skills.charisma >= 150 && currentWorkRep >= 250000) { // More skill means more rep/sec, if low skill == no need to wait
+		if (currentWork?.type == "COMPANY" && player.skills.hacking >= 300 && player.skills.charisma >= 150) { // More skill means more rep/sec, if low skill == no need to wait
 			if (!wasCompanyWorking) // Only log the first time we detect we've started company working
 				log(ns, "Company Working in progress. autopilot.js will make sure to not install augmentations or otherwise interrupt it.");
 			return wasCompanyWorking = true;
