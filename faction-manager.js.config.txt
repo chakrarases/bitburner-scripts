@@ -1,11 +1,14 @@
 {
   "priority-aug": [
     "The Red Pill",
-    "ADR-V1 Pheromone Gene",
-    "CashRoot Starter Kit",
+		"ADR-V1 Pheromone Gene",
     "Social Negotiation Assistant (S.N.A)",
+		"Speech Processor Implant",
+    "Nanofiber Weave",
     "Neuroreceptor Management Implant",
     "Neuregen Gene Modification",
+    "Neuralstimulator",
+    "DataJack",
     "Neural-Retention Enhancement",
     "CRTX42-AA Gene Modification",
     "The Black Hand",
