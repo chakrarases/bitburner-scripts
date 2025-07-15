@@ -1,5 +1,6 @@
 {
   "priority-aug": [
+    "The Red Pill",
     "ADR-V1 Pheromone Gene",
     "CashRoot Starter Kit",
     "Social Negotiation Assistant (S.N.A)",
