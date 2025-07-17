@@ -42,3 +42,4 @@ alias msh="run mshack/masterHack.js";
 alias kiau="kill autopilot.js";
 alias sles="run sleeve_short.js";
 alias sto="run stockmaster.js";
+alias dev="run dev-console.js";

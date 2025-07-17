@@ -767,7 +767,7 @@ export async function main(ns) {
 		// If we aren't in Aevum already, wait until we have the 200K required to travel (plus some extra buffer to actually spend at the casino)
 		if (player.city != "Aevum" && player.money < 300000) {
 			if (!ranMug4Casino) {
-				const pid2 = launchScriptHelper(ns, 'sleeve_short.js', ["m"]); // Send Sleeves to Mug
+				const pid2 = launchScriptHelper(ns, 'sleeve_short.js', ["s"]); // Send Sleeves to Shoplift
 				await waitForProcessToComplete(ns, pid2, true); // Wait for the script to shut down (and output to be generated)
 				ranMug4Casino = true;
 			}

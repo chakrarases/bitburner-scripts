@@ -16,6 +16,7 @@ sles alg
 sles led
 sles r
 sles i
+sles s
 sles m
 sles h
 sles str
@@ -78,6 +79,9 @@ async function mainLoop(ns) {
     } else if (ns.args[0] == "i") { //set to Idle
       let result = await getNsDataThroughFile(ns, `ns.sleeve.setToIdle(ns.args[0])`, null, [i]);
       //ns.sleeve.setToIdle(i);
+    } else if (ns.args[0] == "s") {
+      let result = await getNsDataThroughFile(ns, `ns.sleeve.setToCommitCrime(ns.args[0], ns.args[1])`, `/Temp/Sleeve_short_crime.txt`, [i, "shoplift"]);
+      //ns.sleeve.setToCommitCrime(i, ns.args[0]);
     } else if (ns.args[0] == "m") {
       let result = await getNsDataThroughFile(ns, `ns.sleeve.setToCommitCrime(ns.args[0], ns.args[1])`, `/Temp/Sleeve_short_crime.txt`, [i, "mug"]);
       //ns.sleeve.setToCommitCrime(i, ns.args[0]);
