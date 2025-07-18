@@ -752,8 +752,14 @@ export async function main(ns) {
 		// In BN8 this is impossible, so in that case we don't even check and head straight to the casino.
 		if (resetInfo.currentNode != 8) {
 			// If we've been in the BN for less than 1 minute, wait a while to establish player's income rate 
-			if (getTimeInAug() < 60000)
+			if (getTimeInAug() < 60000){
+        if (!ranMug4Casino) {
+          const pid2 = launchScriptHelper(ns, 'sleeve_short.js', ["s"]); // Send Sleeves to Shoplift
+          await waitForProcessToComplete(ns, pid2, true); // Wait for the script to shut down (and output to be generated)
+          ranMug4Casino = true;
+        }
 				return log_once(ns, `INFO: Waiting a minute to establish player income before deciding whether casino.js is needed.`);
+      }
 			// Since it's possible that the CashRoot Startker Kit could give a false income velocity, account for that.
 			const cashRootBought = installedAugmentations.includes(`CashRoot Starter Kit`);
 			const incomePerMs = (playerWealth - (cashRootBought ? 1e6 : 0)) / getTimeInAug();
@@ -766,11 +772,6 @@ export async function main(ns) {
 
 		// If we aren't in Aevum already, wait until we have the 200K required to travel (plus some extra buffer to actually spend at the casino)
 		if (player.city != "Aevum" && player.money < 300000) {
-			if (!ranMug4Casino) {
-				const pid2 = launchScriptHelper(ns, 'sleeve_short.js', ["s"]); // Send Sleeves to Shoplift
-				await waitForProcessToComplete(ns, pid2, true); // Wait for the script to shut down (and output to be generated)
-				ranMug4Casino = true;
-			}
 			return log_once(ns, `INFO: Waiting until we have ${formatMoney(300000)} to travel to Aevum and run casino.js`);
 		}
 
