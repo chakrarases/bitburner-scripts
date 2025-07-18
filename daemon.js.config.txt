@@ -1,9 +1,7 @@
 {
-	"disable-script": [
-		"bladeburner.js",
-		"sleeve.js",
-		"gangs.js"
-	],
 	"reserved-ram": 32,
+	"no-share": true,
+	"max-steal-percentage": 0.9,
+	"i": false,
 	"silent-misfires": true
 }

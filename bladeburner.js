@@ -12,7 +12,7 @@ const costAdjustments = {
     "Reaper": 1.2, // Combat boost. Early effect is paltry (because stats are so low), will get plenty of points late game
     "Evasive Systems": 1.2, // Dex/Agi boost. Mildly deprioritized for same reasoning as above.
     "Cloak": 1.5, // Cheap, and stealth ends up with plenty of boost, so we don't need to invest in Cloak as much.
-    "Hyperdrive": 2, // Improves stats gained, but not Rank gained. Less useful if training outside of BB
+    "Hyperdrive": 0.2, // 2.0 -> 0.2 for Int farming // Improves stats gained, but not Rank gained. Less useful if training outside of BB
     "Tracer": 2, // Only boosts Contract success chance, which are relatively easy to begin with.
     "Cyber's Edge": 5, // Boosts stamina, but contract counts are much more limiting than stamina, so isn't really needed
     "Hands of Midas": 10 // Improves money gain. It is assumed that Bladeburner will *not* be a main source of income
