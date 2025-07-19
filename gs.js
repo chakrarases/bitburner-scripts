@@ -1,5 +1,5 @@
 import {
-	formatMoney
+	formatMoney, getNsDataThroughFile
 } from './helpers.js'
 
 /** 
@@ -43,7 +43,7 @@ function get_action(ns, host) {
 	if (actions.length == 0) {
 		return null
 	}
-	return actions[0].filename.replace("param/", "").replace(".js", "")
+	return actions[0].filename.replace("target", "").replace("Remote/", "").replace("param/", "").replace("mshack/", "").replace("masterHack", "MSH").replace(".js", "")
 }
 
 function pad_str(string, len) {
@@ -54,7 +54,7 @@ function pad_str(string, len) {
 	return String(pad + string).slice(-len)
 }
 
-function get_server_data(ns, server) {
+async function get_server_data(ns, server) {
 	/*
 	Creates the info text for each server. Currently gets money, security, and ram.
 	NOTE: ns.getServer() can return a server object and obtain all of the necessary properties.
@@ -67,7 +67,9 @@ function get_server_data(ns, server) {
 	var ram = ns.getServerMaxRam(server)
 	var hackLvl = ns.getServerRequiredHackingLevel(server)
 	var growth = ns.getServerGrowth(server)
-	var core = ns.getServer(server).cpuCores;
+	var sServer = await getNsDataThroughFile(ns, 'ns.getServer(ns.args[0])', null, [server]);
+	var core = sServer.cpuCores;
+	//ns.tprint("S:"+server);
 
 	return `${pad_str(server, 20)}` +
 		` $:${pad_str(formatMoney(moneyAvailable, 3, 2), 7)}/${pad_str(formatMoney(moneyMax, 3, 2), 7)}(${pad_str((moneyAvailable / moneyMax).toFixed(2), 4)})` +
@@ -97,7 +99,7 @@ export async function main(ns) {
 	var stats = {}
 	// For each server in servers, get the server data and add to our Hash Table.
 	for (var server of servers) {
-		stats[parseInt(ns.getServerMaxMoney(server))] = get_server_data(ns, server)
+		stats[parseInt(ns.getServerMaxMoney(server))] = await get_server_data(ns, server)
 	}
 	// Sort each server based on how much money it holds.
 	var keys = Object.keys(stats)

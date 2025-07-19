@@ -1,7 +1,7 @@
 {
 	"reserved-ram": 32,
 	"no-share": true,
-	"max-steal-percentage": 0.9,
+	"max-steal-percentage": 0.1,
 	"i": false,
 	"silent-misfires": true
 }
