@@ -5,5 +5,5 @@
 	"recovery-thread-padding": 2,
 	"max-steal-percentage": 0.1,
 	"i": false,
-	"silent-misfires": true
+	"silent-misfires": false
 }

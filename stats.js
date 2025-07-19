@@ -149,11 +149,12 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 	// Show Hashes
 	{
 		const val1 = ["Hashes"];
-		const val2 = [" "]; // Blank line placeholder for when hashes are being liquidated
-		const val3 = ["Ha/s"];
-		const val4 = ["Ha T2Mx"];
+		//const val2 = [" "]; // Blank line placeholder for when hashes are being liquidated
+		//const val3 = ["Ha/s"];
+		//const val4 = ["Ha T2Mx"];
 		if (9 in dictSourceFiles || 9 == bitNode) { // Section not relevant if you don't have access to hacknet servers
 			const hashes = await getNsDataThroughFile(ns, '[ns.hacknet.numHashes(), ns.hacknet.hashCapacity()]', '/Temp/hash-stats.txt')
+			
 			if (hashes[1] > 0) {
 				val1.push(true, `${formatNumberShort(hashes[0], 3, 1)}/${formatNumberShort(hashes[1], 3, 1)}`,
 					`Current Hashes ${hashes[0].toLocaleString('en')} / Current Hash Capacity ${hashes[1].toLocaleString('en')}`)
@@ -162,16 +163,18 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 				const liquidatingHashes = await getNsDataThroughFile(ns,
 					`ns.ps('home').filter(p => p.filename == ns.args[0] && (p.args.includes('--liquidate') || p.args.includes('-l')))`,
 					'/Temp/hash-liquidation-scripts.txt', [spendHashesScript]);
+				/*
 				if (liquidatingHashes.length > 0)
 					val2.push(true, "Liquidating", `You have a script running that is selling hashes as quickly as possible ` +
 						`(PID ${liquidatingHashes[0].pid}: ${spendHashesScript} ${liquidatingHashes[0].args.join(' ')})`);
+				*/
 			}
 		}
 		if (val1.length < 2) val1.push(false);
-		if (val2.length < 2) val2.push(false);
-		if (val3.length < 2) val3.push(false);
-		if (val4.length < 2) val4.push(false);
-		hudData.push(val1, val2, val3, val4)
+		//if (val2.length < 2) val2.push(false);
+		//if (val3.length < 2) val3.push(false);
+		//if (val4.length < 2) val4.push(false);
+		hudData.push(val1)//, val2, val3, val4)
 	}
 
 	{
