@@ -1,6 +1,8 @@
 {
 	"reserved-ram": 32,
-	"no-share": true,
+	"no-share": false,
+	"cycle-timing-delay": 1000,
+	"recovery-thread-padding": 2,
 	"max-steal-percentage": 0.1,
 	"i": false,
 	"silent-misfires": true

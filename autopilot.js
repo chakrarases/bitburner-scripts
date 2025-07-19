@@ -172,7 +172,7 @@ export async function main(ns) {
 		}
 		// We currently no longer have any one-time logic that needs to be run at the start of a new bitnode
 		//if (getTimeInBitnode() < 60 * 1000) // Skip initialization if we've been in the bitnode for more than 1 minute
-		//    await initializeNewBitnode(ns);
+		  //await initializeNewBitnode(ns);
 
 		// Decide what the next-up bitnode should be
 		const getSFLevel = bn => Number(bn + "." + ((dictOwnedSourceFiles[bn] || 0) + (resetInfo.currentNode == bn ? 1 : 0)));
@@ -186,6 +186,8 @@ export async function main(ns) {
 		if (nextBn != nextRecommendedBn)
 			log(ns, `WARN: The next recommended BN is ${nextRecommendedBn}, but the --next-bn parameter is set to override this with ${nextBn}.`, true, 'warning');
 
+		launchScriptHelper(ns, '/v1/deployer.js');
+		launchScriptHelper(ns, '/v2/hwgw.js');
 		return true;
 	}
 
@@ -209,6 +211,8 @@ export async function main(ns) {
 	 * @param {NS} ns */
 	async function initializeNewBitnode(ns) {
 		// Nothing to do here (yet)
+		//launchScriptHelper(ns, '/v1/deployer.js');
+		//launchScriptHelper(ns, '/v2/hwgw.js');
 	}
 
 	/** Logic run periodically throughout the BN
@@ -691,6 +695,8 @@ export async function main(ns) {
 			// NOTE: Default work-for-factions behaviour is to spend hashes on coding contracts, which suits us fine
 			launchScriptHelper(ns, 'work-for-factions.js', rushGang ? rushGangsArgs : workForFactionsArgs);
 		}
+		//launchScriptHelper(ns, '/v1/deployer.js');
+		//launchScriptHelper(ns, '/v2/hwgw.js');
 	}
 
 	/** Get the source of the player's earnings by category.

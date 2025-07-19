@@ -150,6 +150,8 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 	{
 		const val1 = ["Hashes"];
 		const val2 = [" "]; // Blank line placeholder for when hashes are being liquidated
+		const val3 = ["Ha/s"];
+		const val4 = ["Ha T2Mx"];
 		if (9 in dictSourceFiles || 9 == bitNode) { // Section not relevant if you don't have access to hacknet servers
 			const hashes = await getNsDataThroughFile(ns, '[ns.hacknet.numHashes(), ns.hacknet.hashCapacity()]', '/Temp/hash-stats.txt')
 			if (hashes[1] > 0) {
@@ -167,7 +169,9 @@ async function getHudData(ns, bitNode, dictSourceFiles, options) {
 		}
 		if (val1.length < 2) val1.push(false);
 		if (val2.length < 2) val2.push(false);
-		hudData.push(val1, val2)
+		if (val3.length < 2) val3.push(false);
+		if (val4.length < 2) val4.push(false);
+		hudData.push(val1, val2, val3, val4)
 	}
 
 	{

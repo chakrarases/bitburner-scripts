@@ -1,3 +1,6 @@
+import {
+	getFnRunViaNsExec, runCommand_Custom
+} from 'helpers.js'
 /** @param {NS} ns */
 export async function main(ns) {
 
@@ -13,6 +16,7 @@ export async function main(ns) {
 		// Note: We experimented with ram-dodging `ps`, but there's so much data involed that serializing/deserializing generates a lot of latency
 		//psResult ??= await getNsDataThroughFile(ns, 'ns.ps(ns.args[0])', null, [serverName]));
 		psResult ??= psCache[serverName] = ns.ps(serverName);
+		//ns.tprint(psResult);
 		return psResult;
 	}
 
@@ -20,6 +24,9 @@ export async function main(ns) {
 	 * @param {NS} ns **/
 	async function killProcessIds(ns, processIds) {
 		return await runCommand(ns, `ns.args.forEach(ns.kill)`, '/Temp/kill-pids.js', processIds);
+	}
+	async function runCommand(ns, ...args) {
+		return await runCommand_Custom(ns, getFnRunViaNsExec(ns, "home"), ...args);
 	}
 
 	// Retrieve a list of all reachable servers from "home".
@@ -74,121 +81,36 @@ export async function main(ns) {
 		else if (ns.getServerRequiredHackingLevel(server) > ns.getHackingLevel()) {
 			//ns.killall(server);
 			//ns.tprint(server);
-			const scriptName = "/mshack/masterHack.js";
+			const scriptName = "mshack/masterHack.js";
 			const competingMaster = processList(ns, server, false /* Important! Don't use the (global shared) cache. */)
-				.filter(s => s.filename == scriptName && s.pid != ns.pid);
-			ns.tprint("competingMaster High:" + competingMaster);
+				.filter(s => s.filename == scriptName);
+			ns.tprint("High :" + competingMaster.length + " Server : " + server);
 			if (competingMaster.length > 0) { // We expect only 1, due to this logic, but just in case, generalize the code below to support multiple.
-				const masterPids = competingMaster.map(p => p.pid);
-				const killPid = await killProcessIds(ns, masterPids);
-				ns.tprint("Kill PID:" + killPid);
+				//const masterPids = competingMaster.map(p => p.pid);
+				//const killPid = await killProcessIds(ns, masterPids);
+				//ns.tprint("Kill PID:" + killPid);
+			} else {
+				ns.exec("/mshack/masterHack.js", server, 1, server, server);
+				ns.tprint("Deploy MasterHack on s: " + server);
 			}
-			ns.exec("/mshack/masterHack.js", server, 1, server, server);
 			continue;
 			//ns.exec("/param/grow.js", server, 8 * factor, server);
 		} else {
 			//ns.tprint(server);
-			const scriptName = "/mshack/masterHack.js";
+			const scriptName = "mshack/masterHack.js";
 			const competingMaster = processList(ns, server, false /* Important! Don't use the (global shared) cache. */)
-				.filter(s => s.filename == scriptName && s.pid != ns.pid);
-			ns.tprint("competingMaster Low :" + competingMaster.length);
+				.filter(s => s.filename == scriptName);
+			ns.tprint("Low :" + competingMaster.length + " Server : " + server);
 			if (competingMaster.length > 0) { // We expect only 1, due to this logic, but just in case, generalize the code below to support multiple.
-				const masterPids = competingMaster.map(p => p.pid);
-				const killPid = await killProcessIds(ns, masterPids);
-				ns.tprint("Kill PID:" + killPid);
+				//const masterPids = competingMaster.map(p => p.pid);
+				//const killPid = await killProcessIds(ns, masterPids);
+				//ns.tprint("Kill PID:" + killPid);
+			} else {
+				ns.exec("/mshack/masterHack.js", server, 1, server, server);
+				ns.tprint("Deploy MasterHack on s: " + server);
 			}
-			ns.exec("/mshack/masterHack.js", server, 1, server, server);
 			continue;
 		}
-		//ns.tprint("S:" + server, ",SecDiff:" + securityLvlDiff);
-		//ns.tprint("S:"+server+", M:"+moneyRatio);
-
-		//ns.killall(server);
-		//ns.exec("/mshack/masterHack.js", server, 1, [server, server]);
-		//continue;
-		/*
-		if (securityLvlDiff > 2) { //High diff need more weak
-			ns.killall(server);
-			ns.exec("/mshack/masterHack.js", server, 1, [server, server]);
-			continue;
-			//ns.exec("/param/weak.js", server, 9 * factor, server);
-		} else {
-			if (ns.getServerGrowth(server) < 40) { //Bad growth rate
-				if ((ns.getHackingLevel() - ns.getServerRequiredHackingLevel(server)) > 100) {
-					if (moneyRatio >= 0.90) {
-						ns.killall(server);
-						ns.exec("/param/hack.js", server, 1 * factor, server);
-						ns.exec("/param/grow.js", server, 7 * factor, server);
-						ns.exec("/param/weak.js", server, 1 * factor, server);
-					} else {
-						ns.killall(server);
-						ns.exec("/shared/ramshare.js", server, 4 * factor, server);
-					}
-				} else {
-					ns.killall(server);
-					ns.exec("/param/grow.js", server, 8 * factor, server);
-					ns.exec("/param/weak.js", server, 1 * factor, server);
-				}
-			} else { //Good growth rate
-				ns.killall(server);
-				ns.exec("/param/grow.js", server, 7 * factor, server);
-				ns.exec("/param/weak.js", server, 2 * factor, server);
-				if (moneyRatio >= 0.90) {
-					ns.killall(server);
-					ns.exec("/param/hack.js", server, 1 * factor, server);
-					ns.exec("/param/grow.js", server, 7 * factor, server);
-					ns.exec("/param/weak.js", server, 1 * factor, server);
-				}
-			}
-		}
-		*/
-
-
-		/*
-		else if ((ns.getHackingLevel() - ns.getServerRequiredHackingLevel(server)) > 100) {
-		if (ns.getServerGrowth(server) >= 40) { //High Growth rate 40%
-			if ((ns.getServerMoneyAvailable(server) / ns.getServerMaxMoney(server)) < 0.70) {
-			ns.killall(server);
-			//ns.exec("/param/hack.js", server, 1 * factor, server);
-			ns.exec("/param/grow.js", server, 8 * factor, server);
-			ns.exec("/param/weak.js", server, 1 * factor, server);
-			}
-			else {
-			ns.killall(server);
-			ns.exec("/param/hack.js", server, 1 * factor, server);
-			ns.exec("/param/grow.js", server, 6 * factor, server);
-			ns.exec("/param/weak.js", server, 2 * factor, server);
-			}
-		} else { // Low Growth rate, put to share for reputation
-			ns.killall(server);
-			ns.exec("/shared/ramshare.js", server, 4 * factor, server);
-		}
-		}
-		*/
-		/*
-		else if ((ns.getServerMoneyAvailable(server) / ns.getServerMaxMoney(server)) < 0.70) {
-		ns.killall(server);
-		//ns.exec("/param/hack.js", server, 1 * factor, server);
-		ns.exec("/param/grow.js", server, 6 * factor, server);
-		ns.exec("/param/weak.js", server, 3 * factor, server);
-		}
-		*/
-		/*
-		else if ((ns.getServerSecurityLevel(server) - ns.getServerMinSecurityLevel(server)) > 2) {
-		ns.killall(server);
-		//ns.exec("/param/grow.js", server, 1 * factor, server);
-		ns.exec("/param/weak.js", server, 9 * factor, server);
-		//ns.exec("/param/hack.js", server, 1 * factor, server);
-		}
-		*/
-		/*
-		else {
-		ns.killall(server);
-		ns.exec("/param/hack.js", server, 1 * factor, server);
-		ns.exec("/param/grow.js", server, 6 * factor, server);
-		ns.exec("/param/weak.js", server, 2 * factor, server);
-		}
-		*/
 
 	}
 	/*
