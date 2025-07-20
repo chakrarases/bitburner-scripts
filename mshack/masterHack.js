@@ -102,13 +102,21 @@ export async function main(ns) {
 			useThreadsGrow = Math.floor((possibleThreads - useThreadsWeaken1 - useThreadsHack) * growWeakenRatio);
 			useThreadsWeaken2 = possibleThreads - useThreadsHack - useThreadsGrow - useThreadsWeaken1;
 			for (i = 0; i < batches; i++) {
-				ns.exec(weakenScript, serverToHackFrom, useThreadsWeaken1, target, 0, 0 + 2 * i);
+				if (useThreadsWeaken1 > 0) {
+					ns.exec(weakenScript, serverToHackFrom, useThreadsWeaken1, target, 0, 0 + 2 * i);
+				}
 				sleepTime = 2 * sleepDelay;
-				ns.exec(weakenScript, serverToHackFrom, useThreadsWeaken2, target, sleepTime, 1 + 2 * i); // Second weaken script runs after the first
+				if (useThreadsWeaken2 > 0) {
+					ns.exec(weakenScript, serverToHackFrom, useThreadsWeaken2, target, sleepTime, 1 + 2 * i); // Second weaken script runs after the first
+				}
 				sleepTime = sleepTimeWeaken - sleepTimeGrow + sleepDelay;
-				ns.exec(growScript, serverToHackFrom, useThreadsGrow, target, sleepTime, i); // Grow script ends before second weaken script
+				if (useThreadsGrow > 0) {
+					ns.exec(growScript, serverToHackFrom, useThreadsGrow, target, sleepTime, i); // Grow script ends before second weaken script
+				}
 				sleepTime = sleepTimeWeaken - sleepTimeHack - sleepDelay;
-				ns.exec(hackScript, serverToHackFrom, useThreadsHack, target, sleepTime, i); // Hack script ends before first weaken script
+				if (useThreadsHack > 0) {
+					ns.exec(hackScript, serverToHackFrom, useThreadsHack, target, sleepTime, i); // Hack script ends before first weaken script
+				}
 				await ns.sleep(3 * sleepDelay);
 			}
 			await ns.sleep(sleepTimeWeaken);
