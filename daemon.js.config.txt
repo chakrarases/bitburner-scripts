@@ -3,7 +3,7 @@
 	"no-share": false,
 	"cycle-timing-delay": 1000,
 	"recovery-thread-padding": 2,
-	"max-steal-percentage": 0.1,
+	"max-steal-percentage": 0.03,
 	"i": false,
-	"silent-misfires": false
+	"silent-misfires": true
 }

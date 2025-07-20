@@ -186,8 +186,8 @@ export async function main(ns) {
 		if (nextBn != nextRecommendedBn)
 			log(ns, `WARN: The next recommended BN is ${nextRecommendedBn}, but the --next-bn parameter is set to override this with ${nextBn}.`, true, 'warning');
 
-		launchScriptHelper(ns, '/v1/deployer.js');
-		launchScriptHelper(ns, '/v2/hwgw.js');
+		//launchScriptHelper(ns, '/v1/deployer.js');
+		//launchScriptHelper(ns, '/v2/hwgw.js');
 		return true;
 	}
 

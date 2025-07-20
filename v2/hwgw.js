@@ -34,8 +34,7 @@ export async function main(ns) {
 
 	// Iterate through each server, excluding "home", and attempt run weak grow hack function.
 	/*
-	while (true) {
-		await ns.sleep(100);
+		while (true) {
 	*/
 	for (let server of SERVERS) {
 		let factor = 1;
@@ -45,6 +44,7 @@ export async function main(ns) {
 		let moneyRatio = (moneyAvailable / moneyMax);
 
 		if (server === "home") continue;
+		if (server === "hacknet-server") continue;
 
 		ns.print(server);
 		ns.print(ns.getServerMaxRam(server));
@@ -84,14 +84,14 @@ export async function main(ns) {
 			const scriptName = "mshack/masterHack.js";
 			const competingMaster = processList(ns, server, false /* Important! Don't use the (global shared) cache. */)
 				.filter(s => s.filename == scriptName);
-			ns.tprint("High :" + competingMaster.length + " Server : " + server);
+			//ns.tprint("High :" + competingMaster.length + " Server : " + server);
 			if (competingMaster.length > 0) { // We expect only 1, due to this logic, but just in case, generalize the code below to support multiple.
 				//const masterPids = competingMaster.map(p => p.pid);
 				//const killPid = await killProcessIds(ns, masterPids);
 				//ns.tprint("Kill PID:" + killPid);
 			} else {
 				ns.exec("/mshack/masterHack.js", server, 1, server, server);
-				ns.tprint("Deploy MasterHack on s: " + server);
+				//ns.tprint("Deploy MasterHack on s: " + server);
 			}
 			continue;
 			//ns.exec("/param/grow.js", server, 8 * factor, server);
@@ -100,22 +100,23 @@ export async function main(ns) {
 			const scriptName = "mshack/masterHack.js";
 			const competingMaster = processList(ns, server, false /* Important! Don't use the (global shared) cache. */)
 				.filter(s => s.filename == scriptName);
-			ns.tprint("Low :" + competingMaster.length + " Server : " + server);
+			//ns.tprint("Low :" + competingMaster.length + " Server : " + server);
 			if (competingMaster.length > 0) { // We expect only 1, due to this logic, but just in case, generalize the code below to support multiple.
 				//const masterPids = competingMaster.map(p => p.pid);
 				//const killPid = await killProcessIds(ns, masterPids);
 				//ns.tprint("Kill PID:" + killPid);
 			} else {
 				ns.exec("/mshack/masterHack.js", server, 1, server, server);
-				ns.tprint("Deploy MasterHack on s: " + server);
+				//ns.tprint("Deploy MasterHack on s: " + server);
 			}
 			continue;
 		}
-
 	}
 	/*
-	}
+	await ns.sleep(10 * 1000); // wait 10 sec
+}
 	*/
+
 
 	/**
 	 * Discovers all servers connected to the starting server ("home"), using a depth-first search.
