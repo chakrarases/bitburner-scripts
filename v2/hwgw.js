@@ -38,13 +38,13 @@ export async function main(ns) {
 	*/
 	for (let server of SERVERS) {
 		let factor = 1;
-		let securityLvlDiff = ns.getServerSecurityLevel(server) - ns.getServerMinSecurityLevel(server);
-		let moneyAvailable = ns.getServerMoneyAvailable(server);
-		let moneyMax = ns.getServerMaxMoney(server);
-		let moneyRatio = (moneyAvailable / moneyMax);
+		//let securityLvlDiff = ns.getServerSecurityLevel(server) - ns.getServerMinSecurityLevel(server);
+		//let moneyAvailable = ns.getServerMoneyAvailable(server);
+		//let moneyMax = ns.getServerMaxMoney(server);
+		//let moneyRatio = (moneyAvailable / moneyMax);
 
 		if (server === "home") continue;
-		if (server === "hacknet-server") continue;
+		if (server.indexOf("hacknet-server") != -1) continue;
 
 		ns.print(server);
 		ns.print(ns.getServerMaxRam(server));
@@ -75,26 +75,8 @@ export async function main(ns) {
 		}
 		else if (ns.getServerMoneyAvailable(server) == 0) {
 			//ns.tprint(server);
-			//ns.exec("/shared/ramshare.js", server, 4 * factor, server);
+			ns.exec("/shared/ramshare.js", server, 4 * factor, server);
 			continue;
-		}
-		else if (ns.getServerRequiredHackingLevel(server) > ns.getHackingLevel()) {
-			//ns.killall(server);
-			//ns.tprint(server);
-			const scriptName = "mshack/masterHack.js";
-			const competingMaster = processList(ns, server, false /* Important! Don't use the (global shared) cache. */)
-				.filter(s => s.filename == scriptName);
-			//ns.tprint("High :" + competingMaster.length + " Server : " + server);
-			if (competingMaster.length > 0) { // We expect only 1, due to this logic, but just in case, generalize the code below to support multiple.
-				//const masterPids = competingMaster.map(p => p.pid);
-				//const killPid = await killProcessIds(ns, masterPids);
-				//ns.tprint("Kill PID:" + killPid);
-			} else {
-				ns.exec("/mshack/masterHack.js", server, 1, server, server);
-				//ns.tprint("Deploy MasterHack on s: " + server);
-			}
-			continue;
-			//ns.exec("/param/grow.js", server, 8 * factor, server);
 		} else {
 			//ns.tprint(server);
 			const scriptName = "mshack/masterHack.js";

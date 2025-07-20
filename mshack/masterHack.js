@@ -123,5 +123,5 @@ export async function main(ns) {
 			maxHackFactor = 0.01;
 		}
 	}
-	ns.tprint("Script was terminated. Not enough RAM available on '" + serverToHackFrom + "'.")
+	//ns.tprint("Script was terminated. Not enough RAM available on '" + serverToHackFrom + "'.")
 }
