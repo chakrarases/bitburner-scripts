@@ -1,0 +1,16 @@
+{
+	"install-for-augs":
+	[
+		"violet Congruity Implant",
+		"SmartJaw",
+		"OmniTek InfoLoad",
+		"ADR-V2 Pheromone Gene",
+		"The Shadow's Simulacrum",
+		"Xanipher",
+		"Neurotrainer III",
+		"nextSENS Gene Modification",
+		"ECorp HVMind Implant",
+		"Neuronal Densification",
+		"QLink"
+	]
+}

@@ -31,6 +31,34 @@ export async function main(ns) {
 	async function getPlayerInfo(ns) {
 		return await getNsDataThroughFile(ns, `ns.getPlayer()`);
 	}
+	/** Helper to launch a script and log whether if it succeeded or failed
+	 * @param {NS} ns */
+	function launchScriptHelper(ns, baseScriptName, args = [], convertFileName = true) {
+		if (!options['no-tail-windows'])
+			tail(ns); // If we're going to be launching scripts, show our tail window so that we can easily be killed if the user wants to interrupt.
+		let pid, err;
+		try { pid = ns.run(convertFileName ? getFilePath(baseScriptName) : baseScriptName, 1, ...args); }
+		catch (e) { err = e; }
+		if (pid)
+			log(ns, `INFO: Launched ${baseScriptName} (pid: ${pid}) with args: [${args.join(", ")}]`, true);
+		else
+			log(ns, `ERROR: Failed to launch ${baseScriptName} with args: [${args.join(", ")}]` +
+				(err ? `\nCaught: ${getErrorInfo(err)}` : ''), true, 'error');
+		return pid;
+	}
+	/** Helper to get a list of all scripts running (on home)
+	 * @param {NS} ns */
+	async function getRunningScripts(ns) {
+		return await getNsDataThroughFile(ns, 'ns.ps(ns.args[0])', null, ['home']);
+	}
+	/** Helper to get the first instance of a running script by name.
+	 * @param {NS} ns
+	 * @param {string} baseScriptName The name of a script (before applying getFilePath)
+	 * @param {ProcessInfo[]} runningScripts - (optional) Cached list of running scripts to avoid repeating this expensive request
+	 * @param {(value: ProcessInfo, index: number, array: ProcessInfo[]) => unknown} filter - (optional) Filter the list of processes beyond just matching on the script name */
+	function findScriptHelper(baseScriptName, runningScripts, filter = null) {
+		return runningScripts.filter(s => s.filename == getFilePath(baseScriptName) && (!filter || filter(s)))[0];
+	}
 	/** Helper to kill a running script instance by name
 	 * @param {NS} ns
 	 * @param {ProcessInfo[]} runningScripts - (optional) Cached list of running scripts to avoid repeating this expensive request
@@ -92,20 +120,24 @@ export async function main(ns) {
 		//if found in installed aug, skip
 		if (installedAugmentations.includes(graftinglists[i])) {
 			//ns.tprint(graftinglists[i] + " installed, so skipped it");
+			log(ns, "AT: " + graftinglists[i] + " installed, so skipped it");
 			continue;
 		}
 
 		let price = await getNsDataThroughFile(ns, 'ns.grafting.getAugmentationGraftPrice(ns.args[0])', null, [graftinglists[i]]);
 		price = price + 1e6; //Fly to New Tokyo cost
 		//ns.tprint("Total Money == " + formatMoney(stocksValue + player.money));
+		log(ns, "AT: Total Money == " + formatMoney(stocksValue + player.money));
 		//ns.tprint("Require Money == " + formatMoney(price));
+		log(ns, "AT: Require Money == " + formatMoney(price));
 		//ns.Grafting.getAugmentationGraftPrice(augName)
 		//if have enough money do graft
 		if ((stocksValue + player.money) >= price) {
 			//if only player.money not enough, sell all stock
 			if (player.money < price) {
 				await killScript(ns, 'stockmaster.js');
-				ns.run("stockmaster.js", 1, "liquidate");
+				ns.run("stockmaster.js", 1, "--liquidate");
+				await ns.sleep(5 * 1000);
 			}
 			//goto New Tokyo
 			//ns.singularity.travelToCity("New Tokyo")
@@ -114,13 +146,18 @@ export async function main(ns) {
 			//ns.grafting.graftAugmentation("SmartJaw", true)
 			await getNsDataThroughFile(ns, 'ns.grafting.graftAugmentation(ns.args[0],ns.args[1])', null, [graftinglists[i], true]);
 			//ns.tprint(graftinglists[i] + " price == " + formatMoney(price));
+			log(ns, "AT: " + graftinglists[i] + " price == " + formatMoney(price));
 			//ns.tprint(graftinglists[i] + " going to be grafting");
+			log(ns, "AT: " + graftinglists[i] + " going to be grafting");
 			ns.run("stockmaster.js", 1);
 			//ns.tprint(graftinglists[i] + " then start stockmaster");
+			log(ns, "AT: " + graftinglists[i] + " then start stockmaster");
 			return true
 			//installedAugmentations = await getNsDataThroughFile(ns, 'ns.singularity.getOwnedAugmentations()', '/Temp/player-augs-installed.txt');
 		} else {
+			log(ns, "AT: " + graftinglists[i] + " price == " + formatMoney(price));
 			//ns.tprint(graftinglists[i] + " price == " + formatMoney(price));
+			log(ns, "AT: " + graftinglists[i] + " not enough money, so skipped it");
 			//ns.tprint(graftinglists[i] + " not enough money, so skipped it");
 		}
 		//else move to next Aug
