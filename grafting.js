@@ -149,6 +149,8 @@ export async function main(ns) {
 			log(ns, "AT: " + graftinglists[i] + " price == " + formatMoney(price));
 			//ns.tprint(graftinglists[i] + " going to be grafting");
 			log(ns, "AT: " + graftinglists[i] + " going to be grafting");
+				//await killScript(ns, 'work-for-factions.js');
+				//await killScript(ns, 'autopilot.js');
 			ns.run("stockmaster.js", 1);
 			//ns.tprint(graftinglists[i] + " then start stockmaster");
 			log(ns, "AT: " + graftinglists[i] + " then start stockmaster");
