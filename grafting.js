@@ -91,14 +91,14 @@ export async function main(ns) {
 		//manageReservedMoney(ns, player, stocksValue);
 		//if found in installed aug, skip
 		if (installedAugmentations.includes(graftinglists[i])) {
-			ns.tprint(graftinglists[i] + " installed, so skipped it");
+			//ns.tprint(graftinglists[i] + " installed, so skipped it");
 			continue;
 		}
 
 		let price = await getNsDataThroughFile(ns, 'ns.grafting.getAugmentationGraftPrice(ns.args[0])', null, [graftinglists[i]]);
 		price = price + 1e6; //Fly to New Tokyo cost
-		ns.tprint("Total Money == " + formatMoney(stocksValue + player.money));
-		ns.tprint("Require Money == " + formatMoney(price));
+		//ns.tprint("Total Money == " + formatMoney(stocksValue + player.money));
+		//ns.tprint("Require Money == " + formatMoney(price));
 		//ns.Grafting.getAugmentationGraftPrice(augName)
 		//if have enough money do graft
 		if ((stocksValue + player.money) >= price) {
@@ -113,15 +113,15 @@ export async function main(ns) {
 			//Grafting
 			//ns.grafting.graftAugmentation("SmartJaw", true)
 			await getNsDataThroughFile(ns, 'ns.grafting.graftAugmentation(ns.args[0],ns.args[1])', null, [graftinglists[i], true]);
-			ns.tprint(graftinglists[i] + " price == " + formatMoney(price));
-			ns.tprint(graftinglists[i] + " going to be grafting");
+			//ns.tprint(graftinglists[i] + " price == " + formatMoney(price));
+			//ns.tprint(graftinglists[i] + " going to be grafting");
 			ns.run("stockmaster.js", 1);
-			ns.tprint(graftinglists[i] + " then start stockmaster");
+			//ns.tprint(graftinglists[i] + " then start stockmaster");
 			return true
 			//installedAugmentations = await getNsDataThroughFile(ns, 'ns.singularity.getOwnedAugmentations()', '/Temp/player-augs-installed.txt');
 		} else {
-			ns.tprint(graftinglists[i] + " price == " + formatMoney(price));
-			ns.tprint(graftinglists[i] + " not enough money, so skipped it");
+			//ns.tprint(graftinglists[i] + " price == " + formatMoney(price));
+			//ns.tprint(graftinglists[i] + " not enough money, so skipped it");
 		}
 		//else move to next Aug
 	}

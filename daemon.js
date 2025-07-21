@@ -420,11 +420,13 @@ export async function main(ns) {
 			},
 			// Check if any new servers can be backdoored. If there are many, this can eat up a lot of RAM, so make this the last script scheduled at startup.
 			{ interval: 33000, name: "/Tasks/backdoor-all-servers.js", shouldRun: () => 4 in dictSourceFiles && playerHackSkill() > 10 }, // Don't do this until we reach hack level 10. If we backdoor too early, it's very slow and eats up RAM for a long time,
-		//launchScriptHelper(ns, '/v1/deployer.js');
-		//launchScriptHelper(ns, '/v2/hwgw.js');
+			//launchScriptHelper(ns, '/v1/deployer.js');
+			//launchScriptHelper(ns, '/v2/hwgw.js');
 			// Run v2/hwhg.js to install MasterHack on all free RAM server
-			{ interval: 34000, name: "/v1/deployer.js", minRamReq: 3 }, // 
+			{ interval: 34000, name: "/v1/deployer.js", minRamReq: 5 }, // 
 			{ interval: 35000, name: "/v2/hwgw.js", minRamReq: 5 }, // 
+			// Run grafting.js every 2 minutes 2 * 60 * 1000
+			{ interval: 2 * 60 * 1000, name: "grafting.js", minRamReq: 5 }, // 
 		];
 		periodicScripts.forEach(tool => tool.ignoreReservedRam = true);
 		if (verbose) // In verbose mode, have periodic sripts persist their logs.
