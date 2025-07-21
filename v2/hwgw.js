@@ -75,7 +75,7 @@ export async function main(ns) {
 		}
 		else if (ns.getServerMoneyAvailable(server) == 0) {
 			//ns.tprint(server);
-			ns.exec("/shared/ramshare.js", server, 4 * factor, server);
+			//ns.exec("/shared/ramshare.js", server, 4 * factor, server);
 			continue;
 		} else {
 			//ns.tprint(server);

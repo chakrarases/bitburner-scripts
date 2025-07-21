@@ -3,9 +3,8 @@
     "Tian Di Hui","CyberSec","Daedalus","BitRunners",
     "Chongqing","The Black Hand","NiteSec",
     "ECorp",
-		"Fulcrum Secret Technologies",
-    "Bachman & Associates",
     "Clarke Incorporated","OmniTek Incorporated","NWO",
+		"Fulcrum Secret Technologies",
     "Blade Industries","MegaCorp","KuaiGong International",
     "Four Sigma",
 		"Silhouette",
@@ -14,9 +13,10 @@
     "New Tokyo","Sector-12","Ishima"
   ],
   "skip": [
-    "Volhaven","Aevum",
+    "Bachman & Associates",
     "Tetrads","Slum Snakes","The Dark Army",
-    "The Syndicate","Speakers for the Dead"
+    "The Syndicate","Speakers for the Dead",
+    "Volhaven","Aevum"
   ],
   "pay-for-studies-threshold":200000,
   "disable-treating-gang-as-sole-provider-of-its-augs":true,
