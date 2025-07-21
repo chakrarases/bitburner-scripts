@@ -426,7 +426,7 @@ export async function main(ns) {
 			{ interval: 34000, name: "/v1/deployer.js", minRamReq: 5 }, // 
 			{ interval: 35000, name: "/v2/hwgw.js", minRamReq: 5 }, // 
 			// Run grafting.js every 2 minutes 2 * 60 * 1000
-			//{ interval: 2 * 60 * 1000, name: "grafting.js", minRamReq: 5 }, // 
+			{ interval: 2 * 60 * 1000, name: "grafting.js", minRamReq: 5 }, // 
 		];
 		periodicScripts.forEach(tool => tool.ignoreReservedRam = true);
 		if (verbose) // In verbose mode, have periodic sripts persist their logs.
@@ -498,6 +498,9 @@ export async function main(ns) {
 	async function kickstartHackXp(ns) {
 		let startedStudying = false;
 		try {
+			if (10 in dictSourceFiles || bitNodeN === 10) {
+				return log(ns, 'WARNING: We have SF 10 we prefer Grafting prioty more than Scheduling an XP cycle', false, 'warning');
+			}
 			if (4 in dictSourceFiles && options['initial-study-time'] > 0) {
 				// The safe/cheap thing to do is to study for free at the local university in our current town
 				// The most effective thing is to study Algorithms at ZB university in Aevum.
