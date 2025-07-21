@@ -57,7 +57,7 @@ export async function main(ns) {
 
 	try {
 		if (!(10 in unlockedSFs)) {
-			log(ns, `WARNING: This script requires SF10 (grafting) functions to graft augmentations ` , true);
+			log(ns, `WARNING: This script requires SF10 (grafting) functions to graft augmentations `, true);
 			return false;
 		}
 		if (!(4 in unlockedSFs)) {
@@ -73,6 +73,13 @@ export async function main(ns) {
 		if (unlockedSFs[4] || 0 == 3) throw err; // No idea why this failed, treat as temporary and allow auto-retry.
 		log(ns, `WARNING: You only have SF4 level ${unlockedSFs[4]}. Without level 3, some singularity functions will be ` +
 			`too expensive to run until you have bought a lot of home RAM.`, true);
+	}
+
+	let currentWork = (/**@returns{Task|null}*/() => null)();
+	currentWork = await getNsDataThroughFile(ns, 'ns.singularity.getCurrentWork()');
+	// Never interrupt grafting
+	if (currentWork?.type == "GRAFTING") {
+		return false;
 	}
 
 	//list the grafting requirement
@@ -96,7 +103,7 @@ export async function main(ns) {
 		//if have enough money do graft
 		if ((stocksValue + player.money) >= price) {
 			//if only player.money not enough, sell all stock
-			if (player.money < price){
+			if (player.money < price) {
 				await killScript(ns, 'stockmaster.js');
 				ns.run("stockmaster.js", 1, "liquidate");
 			}
