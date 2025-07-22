@@ -5,11 +5,13 @@
 	"install-at-aug-plus-nf-count": 99,
 	"install-for-augs":[
 		"The Red Pill",
+		"Social Negotiation Assistant (S.N.A)",
 		"Neuroreceptor Management Implant",
 		"Neuregen Gene Modification",
 		"Speech Processor Implant",
 		"Cranial Signal Processors - Gen V",
 		"BitRunners Neurolink",
+		"SPTN-97 Gene Modification",
 		"ECorp HVMind Implant",
 		"SmartJaw",
 		"OmniTek InfoLoad",
