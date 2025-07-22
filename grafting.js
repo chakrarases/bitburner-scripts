@@ -10,7 +10,7 @@ const argsSchema = [ // The set of all command line arguments
 ];
 /** @param {NS} ns */
 export async function main(ns) {
-	const persistentGraftingLog = "log.grafting.txt";
+	const persistGraftLog = "log.grafting.txt";
 
 	let options; // The options used at construction time
 	let homeRam = 0; // Amount of RAM on the home server, last we checked
