@@ -3,7 +3,7 @@ import {
 	formatDateTimeElaspe,
 	getActiveSourceFiles, tryGetBitNodeMultipliers, getStocksValue, unEscapeArrayArgs,
 	formatMoney, formatDuration, formatNumber, getErrorInfo, tail
-} from './helpers.js'
+} from '../helpers.js'
 
 /** @param {NS} ns */
 export async function main(ns) {
