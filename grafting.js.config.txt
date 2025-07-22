@@ -10,7 +10,6 @@
 		"Neurotrainer III",
 		"nextSENS Gene Modification",
 		"ECorp HVMind Implant",
-		"Neuronal Densification",
-		"QLink"
+		"Neuronal Densification"
 	]
 }
