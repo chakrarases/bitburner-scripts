@@ -1,29 +1,6 @@
 {
 	"next-bn": 0,
 	"disable-auto-destroy-bn": false,
-	"install-at-aug-count": 20,
-	"install-at-aug-plus-nf-count": 99,
-	"install-for-augs":[
-		"The Red Pill",
-		"Social Negotiation Assistant (S.N.A)",
-		"Neuroreceptor Management Implant",
-		"Neuregen Gene Modification",
-		"Speech Processor Implant",
-		"Cranial Signal Processors - Gen V",
-		"BitRunners Neurolink",
-		"SPTN-97 Gene Modification",
-		"ECorp HVMind Implant",
-		"SmartJaw",
-		"OmniTek InfoLoad",
-		"Xanipher",
-		"QLink",
-		"nextSENS Gene Modification",
-		"Unstable Circadian Modulator",
-		"Neuronal Densification",
-		"PC Direct-Neural Interface NeuroNet Injector"
-	],
-	"install-countdown": 50,
 	"disable-rush-gangs": false,
-	"disable-bladeburner": false,
-	"xp-mode-interval-minutes": 25
+	"disable-bladeburner": false
 }

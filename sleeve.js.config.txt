@@ -1,4 +1,0 @@
-{
-  "min-shock-recovery":90,
-  "shock-recovery": 0.50
-}

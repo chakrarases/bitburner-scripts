@@ -8,14 +8,14 @@ const simulacrumAugName = "The Blade's Simulacrum"; // This augmentation lets yo
 // we use the following configuration to change their relative cost. Higher number means lower priority
 // Note: Ideally we could emphasize Tracer "early-game" and Digital Observer "late-game", but this is too much of a pain to solve for
 const costAdjustments = {
-    "Overclock": 0.1, // Speed up contracts/operations. More important now that sleeves remove the operation count bottleneck
-    "Reaper": 120, // Combat boost. Early effect is paltry (because stats are so low), will get plenty of points late game
-    "Evasive Systems": 120, // Dex/Agi boost. Mildly deprioritized for same reasoning as above.
-    "Cloak": 150, // Cheap, and stealth ends up with plenty of boost, so we don't need to invest in Cloak as much.
-    "Hyperdrive": 0.2, // 2.0 -> 0.2 for Int farming // Improves stats gained, but not Rank gained. Less useful if training outside of BB
-    "Tracer": 200, // Only boosts Contract success chance, which are relatively easy to begin with.
-    "Cyber's Edge": 500, // Boosts stamina, but contract counts are much more limiting than stamina, so isn't really needed
-    "Hands of Midas": 1000 // Improves money gain. It is assumed that Bladeburner will *not* be a main source of income
+    "Overclock": 0.8, // Speed up contracts/operations. More important now that sleeves remove the operation count bottleneck
+    "Reaper": 1.2, // Combat boost. Early effect is paltry (because stats are so low), will get plenty of points late game
+    "Evasive Systems": 1.2, // Dex/Agi boost. Mildly deprioritized for same reasoning as above.
+    "Cloak": 1.5, // Cheap, and stealth ends up with plenty of boost, so we don't need to invest in Cloak as much.
+    "Hyperdrive": 2, // 2.0 -> 0.2 for Int farming // Improves stats gained, but not Rank gained. Less useful if training outside of BB
+    "Tracer": 2, // Only boosts Contract success chance, which are relatively easy to begin with.
+    "Cyber's Edge": 5, // Boosts stamina, but contract counts are much more limiting than stamina, so isn't really needed
+    "Hands of Midas": 10 // Improves money gain. It is assumed that Bladeburner will *not* be a main source of income
 };
 
 // Some bladeburner info gathered at startup and cached

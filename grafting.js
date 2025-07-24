@@ -11,6 +11,8 @@ const argsSchema = [ // The set of all command line arguments
 /** @param {NS} ns */
 export async function main(ns) {
 	const persistGraftLog = "log.grafting.txt";
+	const augTRP = "The Red Pill";
+	const augStanek = `Stanek's Gift - Genesis`;
 
 	let options; // The options used at construction time
 	let homeRam = 0; // Amount of RAM on the home server, last we checked
@@ -20,6 +22,7 @@ export async function main(ns) {
 	let playerInstalledAugCount = (/**@returns{null|number}*/() => null)(); // Number of augs installed, or null if we don't have SF4 and can't tell.
 	let installedAugmentations = [];
 	let daemonStartTime = 0; // The time we personally launched daemon.
+	let acceptedStanek = false, stanekLaunched = false;
 
 	// Replacements for player properties deprecated since 2.3.0
 	function getTimeInAug() { return Date.now() - resetInfo.lastAugReset; }
@@ -72,6 +75,34 @@ export async function main(ns) {
 		log(ns, `INFO: Skipping request to kill script ${baseScriptName}, no running instance was found...`, false, 'warning');
 		return false;
 	}
+	/** Accept Stanek's gift immediately at the start of the BN (as opposed to just before the first install)
+	 * if it looks like it will scale well.
+	 * @param {NS} ns
+	 * @param {Player} player */
+	async function maybeAcceptStaneksGift(ns, player) {
+		// Look for any reason not to accept stanek's gift (do the quickest checks first)
+		if (acceptedStanek) return;
+		// Don't get Stanek's gift too early if its size is reduced in this BN
+		if (bitNodeMults.StaneksGiftExtraSize < 0) return;
+		// If Stanek's gift size isn't reduced, but is penalized, don't get it too early 
+		if (bitNodeMults.StaneksGiftExtraSize == 0 && bitNodeMults.StaneksGiftPowerMultiplier < 1) return;
+		// Otherwise, it is not penalized in any way, it's probably safe to get it immediately despite the 10% penalty to all stats
+		// If we won't have access to Stanek yet, skip this
+		if (!(13 in unlockedSFs)) return;
+		// If we've already accepted Stanek's gift (Genesis aug is installed), skip
+		if (installedAugmentations.includes(augStanek)) return acceptedStanek = true;
+		// If we have more than Neuroflux (aug) installed, we won't be allowed to accept the gift (but we can try)
+		if (installedAugmentations.length > 1)
+			log(ns, `WARNING: We think it's a good idea to accept Stanek's Gift, but it appears to be too late - other augmentations have been installed. Trying Anyway...`);
+		// Use the API to accept Stanek's gift
+		if (await getNsDataThroughFile(ns, 'ns.stanek.acceptGift()')) {
+			log(ns, `SUCCESS: Accepted Stanek's Gift!`, true, 'success');
+			installedAugmentations.push(augStanek); // Manually add Genesis to installed augmentations so checkOnRunningScripts picks up on the change.
+		} else
+			log(ns, `WARNING: autopilot.js tried to accepted Stanek's Gift, but was denied.`, true, 'warning');
+		// Whether we succeded or failed, don't try again - if we're denied entry (due to having an augmentation) we will never be allowed in
+		acceptedStanek = true;
+	}
 
 	const runOptions = getConfiguration(ns, argsSchema);
 	const player = await getPlayerInfo(ns);
@@ -94,6 +125,9 @@ export async function main(ns) {
 			installedAugmentations = [];
 			playerInstalledAugCount = null; // 'null' is treated as 'Unknown'
 		} else {
+			installedAugmentations = await getNsDataThroughFile(ns, 'ns.singularity.getOwnedAugmentations()', '/Temp/player-augs-installed.txt');
+			playerInstalledAugCount = installedAugmentations.length;
+			await maybeAcceptStaneksGift(ns, player);
 			installedAugmentations = await getNsDataThroughFile(ns, 'ns.singularity.getOwnedAugmentations()', '/Temp/player-augs-installed.txt');
 			playerInstalledAugCount = installedAugmentations.length;
 		}
