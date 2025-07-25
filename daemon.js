@@ -423,10 +423,10 @@ export async function main(ns) {
 			//launchScriptHelper(ns, '/v1/deployer.js');
 			//launchScriptHelper(ns, '/v2/hwgw.js');
 			// Run v2/hwhg.js to install MasterHack on all free RAM server
-			{ interval: 34000, name: "/v1/deployer.js", minRamReq: 5 }, // 
-			{ interval: 35000, name: "/v2/hwgw.js", minRamReq: 5 }, // 
+			//{ interval: 34000, name: "/v1/deployer.js", minRamReq: 5 }, // 
+			//{ interval: 35000, name: "/v2/hwgw.js", minRamReq: 5 }, // 
 			// Run grafting.js every 2 minutes 2 * 60 * 1000
-			{ interval: 2 * 60 * 1000, name: "grafting.js", minRamReq: 5 }, // 
+			//{ interval: 2 * 60 * 1000, name: "grafting.js", minRamReq: 5 }, // 
 		];
 		periodicScripts.forEach(tool => tool.ignoreReservedRam = true);
 		if (verbose) // In verbose mode, have periodic sripts persist their logs.
