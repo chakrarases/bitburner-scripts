@@ -209,7 +209,7 @@ export async function main(ns) {
 				await phaseAdvancing(ns, divisionInfo);
 			}
 		} else {
-			ns.tprint("Cannot Create corp == ");
+			//ns.tprint("Cannot Create corp == ");
 			log(ns, "Cannot Create corp == ");
 		}
 
