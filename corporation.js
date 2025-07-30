@@ -9,15 +9,22 @@ import {
 //const cities = ["Sector-12", "Aevum", "Volhaven", "Chongqing", "New Tokyo"];
 const cities = ["Sector-12", "Aevum", "Volhaven", "Chongqing", "New Tokyo", "Ishima"];
 
+const argsSchema = [ // The set of all command line arguments
+	['sellshare-1hr', false], // If true once Cooldown reach zero, sellallshare and re-create corp
+];
+const persistCorpLog = "log.corporation.txt";
+
+let options; // The options used at construction time
+let resetInfo = (/**@returns{ResetInfo}*/() => undefined)(); // Information about the current bitnode
+let bitNodeMults = (/**@returns{BitNodeMultipliers}*/() => undefined)(); // bitNode multipliers that can be automatically determined after SF-5
+let dictOwnedSourceFiles = (/**@returns{{[k: number]: number;}}*/() => [])(); // Player owned source files
+let unlockedSFs = [], nextBn = 0; // Info for the current bitnode
+let homeRam = 0; // Amount of RAM on the home server, last we checked
+
+
 /** @param {NS} ns **/
 export async function main(ns) {
-	const persistCorpLog = "log.corporation.txt";
 
-	let resetInfo = (/**@returns{ResetInfo}*/() => undefined)(); // Information about the current bitnode
-	let bitNodeMults = (/**@returns{BitNodeMultipliers}*/() => undefined)(); // bitNode multipliers that can be automatically determined after SF-5
-	let dictOwnedSourceFiles = (/**@returns{{[k: number]: number;}}*/() => [])(); // Player owned source files
-	let unlockedSFs = [], nextBn = 0; // Info for the current bitnode
-	let homeRam = 0; // Amount of RAM on the home server, last we checked
 
 	/** @param {NS} ns **/
 	async function startUp(ns) {
@@ -30,21 +37,20 @@ export async function main(ns) {
 		//const player = await getPlayerInfo(ns);
 	}
 
-	// Replacements for player properties deprecated since 2.3.0
-	function getTimeInAug() { return Date.now() - resetInfo.lastAugReset; }
-	function getTimeInBitnode() { return Date.now() - resetInfo.lastNodeReset; }
-
-	/** Ram-dodge getting player info.
-	 * @param {NS} ns
-	 * @returns {Promise<Player>} */
-	async function getPlayerInfo(ns) {
-		return await getNsDataThroughFile(ns, `ns.getPlayer()`);
-	}
-
 	ns.disableLog("disableLog"); ns.disableLog("sleep");
 
 	/** @param {NS} ns **/
 	async function main_start(ns) {
+		const runOptions = getConfiguration(ns, argsSchema);
+		if (!runOptions || await instanceCount(ns) > 1) return; // Prevent multiple instances of this script from being started, even with different args.
+		options = runOptions; // We don't set the global "options" until we're sure this is the only running instance
+
+		if (options['sellshare-1hr']) {
+			ns.tprint("Corporpation mode: Farm money in 1 hr approx " + formatMoney(1e12));
+		} else {
+			ns.tprint("Corporpation mode: Normal running to the Moon!");
+		}
+
 		await startUp(ns);
 		try {
 			if (!(3 in unlockedSFs)) {
@@ -62,12 +68,6 @@ export async function main(ns) {
 		}
 	}
 
-	/** Append the specified text (with timestamp) to a persistent log in the home directory
-	 * @param {String} text
-	 * @param {NS} ns */
-	function persist_log(ns, text) {
-		ns.write(persistCorpLog, `${(new Date()).toISOString().substring(0, 19)} ${text}\n`, "a")
-	}
 	//Debuging and finding the right API
 	/** @param {NS} ns **/
 	async function main_loop(ns) {
@@ -146,6 +146,7 @@ export async function main(ns) {
 					await getNsDataThroughFile(ns, 'ns.corporation.setSmartSupply(ns.args[0],ns.args[1],ns.args[2])||true',
 						"Temp/corporation.setSmartSupply.arm.txt", [corpInfo.divisions[0], "Sector-12", true]);
 				}
+				let hasExport = await getNsDataThroughFile(ns, 'ns.corporation.hasUnlock(ns.args[0])', null, ["Export"]);
 
 				let hasAPIWH = await getNsDataThroughFile(ns, 'ns.corporation.hasUnlock(ns.args[0])', null, ["Warehouse API"]);
 				//log(ns, "hasAPIWH => " + hasAPIWH);
@@ -178,6 +179,9 @@ export async function main(ns) {
 						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])||true`,
 							`Temp/${strFName}.arm.txt`, ["Chemical", "Fertilizer"]);
 					}
+				} else if (cuInvOffer.round == 4) {
+					await upgradesCorp(ns, "Smart Storage", 40);
+					await upgradesCorp(ns, "Smart Factories", 40);
 				}
 				corpInfo = await getNsDataThroughFile(ns, 'ns.corporation.getCorporation()'); //CorporationInfo
 
@@ -205,20 +209,22 @@ export async function main(ns) {
 					await initWarehouse(ns, divisionInfo);
 					await initOffice(ns, divisionInfo);
 					await initOfficeParty(ns, divisionInfo);
-
 					//Upgrades following to Lv2 := FocusWires, Neural Accelerators, Speech Processor Implants, Nuoptimal Nootropic Injector Implants
 					//await upgradesCorp(ns, upName, up2Lv);
-
 					await upgradesCorp(ns, "FocusWires", 2);
 					await upgradesCorp(ns, "Neural Accelerators", 2);
 					await upgradesCorp(ns, "Speech Processor Implants", 2);
 					await upgradesCorp(ns, "Nuoptimal Nootropic Injector Implants", 2);
 					//await upgradesCorp(ns, "DreamSense", 2);
+					await buyBoostMaterial(ns, divisionInfo);
+					await reportProduction(ns, divisionInfo);
 				} else if (cuInvOffer.round == 2) {
 					await initCities(ns, divisionInfo);
 					await initWarehouse(ns, divisionInfo);
 					await initOffice(ns, divisionInfo);
 					await initOfficeParty(ns, divisionInfo);
+					await buyBoostMaterial(ns, divisionInfo);
+					await reportProduction(ns, divisionInfo);
 				} else if (cuInvOffer.round == 3) {
 					await upgradesCorp(ns, "FocusWires", 20);
 					await upgradesCorp(ns, "Neural Accelerators", 20);
@@ -232,23 +238,76 @@ export async function main(ns) {
 					let fertInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[1]]); //Fertilizer
 					await initCities(ns, weedInfo);
-					await initWarehouse(ns, weedInfo);
 					await initOffice(ns, weedInfo);
 					await initOfficeParty(ns, weedInfo);
 					await initCities(ns, fertInfo);
 					await initOffice(ns, fertInfo);
 					await initOfficeParty(ns, fertInfo);
-					//await syncWarehouse(ns, weedInfo, fertInfo);
+					if (!hasExport) {
+						await initWarehouse(ns, weedInfo);
+						await initWarehouse(ns, fertInfo);
+						//purchaseUnlock(upgradeName)
+						strFName = "corporation.purchaseUnlock";
+						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
+							`Temp/${strFName}.arm.txt`, ["Export"]);
+						ns.write("arm.corp.sync.txt", "none", "w");
+					} else {
+						if (ns.read("arm.corp.sync.txt") != "sync") {
+							await syncWeedFert(ns, weedInfo, fertInfo);
+							ns.write("arm.corp.sync.txt", "sync", "w");
+						}
+					}
+					await buyBoostMaterial(ns, weedInfo);
+					await buyBoostMaterial(ns, fertInfo);
+					await reportProduction(ns, weedInfo);
+					await reportProduction(ns, fertInfo);
+				} else if (cuInvOffer.round == 4) {
+					await upgradesCorp(ns, "DreamSense", 4);
+					await upgradesCorp(ns, "Project Insight", 40);
+					strFName = "corporation.getDivision";
+					let weedInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[0]]); //Weed
+					strFName = "corporation.getDivision";
+					let fertInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[1]]); //Fertilizer
+					await initCities(ns, weedInfo);
+					await initOffice(ns, weedInfo);
+					await initOfficeParty(ns, weedInfo);
+					await initCities(ns, fertInfo);
+					await initOffice(ns, fertInfo);
+					await initOfficeParty(ns, fertInfo);
+					if (!hasExport) {
+						await initWarehouse(ns, weedInfo);
+						await initWarehouse(ns, fertInfo);
+						//purchaseUnlock(upgradeName)
+						strFName = "corporation.purchaseUnlock";
+						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
+							`Temp/${strFName}.arm.txt`, ["Export"]);
+						ns.write("arm.corp.sync.txt", "none", "w");
+					} else {
+						if (ns.read("arm.corp.sync.txt") != "sync") {
+							await syncWeedFert(ns, weedInfo, fertInfo);
+							ns.write("arm.corp.sync.txt", "sync", "w");
+						}
+					}
+					await buyBoostMaterial(ns, weedInfo);
+					await buyBoostMaterial(ns, fertInfo);
+					await reportProduction(ns, weedInfo);
+					await reportProduction(ns, fertInfo);
 				}
 				//Warehouse API
 				//await initWarehouse(ns, divisionInfo);
-				await buyBoostMaterial(ns, divisionInfo);
-				await reportProduction(ns, divisionInfo);
+				//await buyBoostMaterial(ns, divisionInfo);
+				//await reportProduction(ns, divisionInfo);
 				await phaseAdvancing(ns, divisionInfo);
+				//await printCorpIndustryDataConst(ns, "Agriculture");
+				//await printCorpIndustryDataConst(ns, "Chemical");
 			}
 		} else {
-			ns.tprint("Cannot Create corp == ");
-			log(ns, "Cannot Create corp == ");
+			ns.tprint("== Cannot Create corp ==");
+			log(ns, "== Cannot Create corp ==");
+			ns.exit();
+			//return;
 		}
 
 		//let corp = ns.corporation.getCorporation(); //Return CorporationInfo interface
@@ -295,6 +354,8 @@ async function initCities(ns, division) {
 				maxWHlv = 10;
 			} else if (cuInvOffer.round == 3) {
 				maxWHlv = 19;
+			} else if (cuInvOffer.round == 4) {
+				maxWHlv = 29;
 			}
 			strFName = "corporation.getWarehouse"; //
 			let constWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
@@ -326,6 +387,30 @@ async function initCities(ns, division) {
 
 /** 
  * @param {NS} ns
+ * @param {Division} weedDiv
+ * @param {Division} fertDiv */
+async function syncWeedFert(ns, weedDiv, fertDiv) {
+	let strFName = "";
+	for (const city of cities) {
+		strFName = "corporation.exportMaterial"
+		//exportMaterial(sourceDivision, sourceCity, targetDivision, targetCity, materialName, amt)
+		//Weed send to Fert Plants
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4],ns.args[5])||true`,
+			`Temp/${strFName}.arm.txt`, [weedDiv.name, city, fertDiv.name, city, "Plants", "-IPROD"]);
+		//Fert send to Weed Chemicals
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4],ns.args[5])||true`,
+			`Temp/${strFName}.arm.txt`, [fertDiv.name, city, weedDiv.name, city, "Chemicals", "-IPROD"]);
+		//setSmartSupplyOption(divisionName, city, materialName, option)
+		strFName = "corporation.setSmartSupplyOption"
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3])||true`,
+			`Temp/${strFName}.arm.txt`, [weedDiv.name, city, "Chemicals", "imports"]);
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3])||true`,
+			`Temp/${strFName}.arm.txt`, [fertDiv.name, city, "Plants", "imports"]);
+	}
+}
+
+/** 
+ * @param {NS} ns
  * @param {Division} division */
 async function initWarehouse(ns, division) {
 	let strFName = "";
@@ -353,14 +438,18 @@ async function initWarehouse(ns, division) {
 			//log(ns, " " + " @City= " + city + " Food" + " => " + formatNumber(thisMaterial.stored));
 			let nFood = 0;
 			nFood = thisMaterial.stored;
-			if (thisMaterial.stored > 1000) { //reduce price
+			if (thisMaterial.stored > 10000) { //reduce price
+				strFName = "corporation.sellMaterial"
+				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
+					`Temp/${strFName}.arm.txt`, [division.name, city, "Food", "MAX", "MPMP*2/3"]);
+			} else if (thisMaterial.stored > 1000) {
 				strFName = "corporation.sellMaterial"
 				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
 					`Temp/${strFName}.arm.txt`, [division.name, city, "Food", "MAX", "MP"]);
-			} else { //set to MP
+			} else { //set to MP*2
 				strFName = "corporation.sellMaterial"
 				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
-					`Temp/${strFName}.arm.txt`, [division.name, city, "Food", "MAX", "MP"]);
+					`Temp/${strFName}.arm.txt`, [division.name, city, "Food", "MAX", "MP*2"]);
 			}
 			strFName = "corporation.getMaterial"
 			thisMaterial = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
@@ -368,20 +457,24 @@ async function initWarehouse(ns, division) {
 			//log(ns, " " + " @City= " + city + " Plants" + " => " + formatNumber(thisMaterial.stored));
 			let nPlant = 0;
 			nPlant = thisMaterial.stored;
-			if (thisMaterial.stored > 1000) { //reduce price
+			if (thisMaterial.stored > 10000) { //reduce price
+				strFName = "corporation.sellMaterial"
+				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
+					`Temp/${strFName}.arm.txt`, [division.name, city, "Plants", "MAX", "MP*2/3"]);
+			} else if (thisMaterial.stored > 1000) {
 				strFName = "corporation.sellMaterial"
 				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
 					`Temp/${strFName}.arm.txt`, [division.name, city, "Plants", "MAX", "MP"]);
-			} else {
+			} else { //set to MP*2
 				strFName = "corporation.sellMaterial"
 				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
-					`Temp/${strFName}.arm.txt`, [division.name, city, "Plants", "MAX", "MP"]);
+					`Temp/${strFName}.arm.txt`, [division.name, city, "Plants", "MAX", "MP*2"]);
 			}
 
 		} else if (division.name == "Fertilizer") { //Chemical
 			strFName = "corporation.sellMaterial"
 			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
-				`Temp/${strFName}.arm.txt`, [division.name, city, "Chemicals", "MAX", "MP"]);
+				`Temp/${strFName}.arm.txt`, [division.name, city, "Chemicals", "MAX", "MP*2"]);
 		}
 	}
 }
@@ -424,8 +517,8 @@ async function buyBoostMaterial(ns, division) {
 				await setupMaterial(ns, division, city, "Robots", 96);
 				await setupMaterial(ns, division, city, "AI Cores", 2445);
 				await setupMaterial(ns, division, city, "Real Estate", 119400);
-			} else if (cuInvOffer.round == 3 && afterWH.level >= 19) {
-				if (nFood <= 100 && nPlant <= 100) {
+			} else if (cuInvOffer.round >= 3 && afterWH.level >= 19) {
+				if ((nFood <= 100 && nPlant <= 100) || ((afterWH.size - afterWH.sizeUsed) >= 800)) {
 					await setupMaterial(ns, division, city, "Hardware", 9300);
 					await setupMaterial(ns, division, city, "Robots", 726);
 					await setupMaterial(ns, division, city, "AI Cores", 6270);
@@ -433,7 +526,20 @@ async function buyBoostMaterial(ns, division) {
 				}
 			}
 		} else if (division.name == "Fertilizer") { //Chemical
-
+			strFName = "corporation.getWarehouse"; //Warehouse
+			let afterWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+				`Temp/${strFName}.arm.txt`, [division.name, city]);
+			if (cuInvOffer.round == 3 && afterWH.level >= 19) {
+				await setupMaterial(ns, division, city, "Hardware", 15000);
+				await setupMaterial(ns, division, city, "Robots", 1100);
+				await setupMaterial(ns, division, city, "AI Cores", 14000);
+				await setupMaterial(ns, division, city, "Real Estate", 230400);
+			} else if (cuInvOffer.round == 4 && afterWH.level >= 29) {
+				await setupMaterial(ns, division, city, "Hardware", 30000);
+				await setupMaterial(ns, division, city, "Robots", 2000);
+				await setupMaterial(ns, division, city, "AI Cores", 30000);
+				await setupMaterial(ns, division, city, "Real Estate", 240000);
+			}
 		}
 	}
 }
@@ -518,18 +624,34 @@ async function initOffice(ns, division) {
 					await setEmployee(ns, division, city, 2, 2, 2, 1, 2, 0);
 				}
 				if (cuInvOffer.round >= 3) {
-					strFName = "corporation.getMaterial"
-					let thisMaterial = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
+					//CheckStorage Full
+					let isStoFull = false;
+					let insWH = null;
+					strFName = "corporation.getWarehouse";
+					insWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+						`Temp/${strFName}.arm.txt`, [division.name, city]);
+					isStoFull = ((insWH.size - insWH.sizeUsed) <= 1000);
+					strFName = "corporation.getMaterial";
+					let thisMaterial = null;
+					thisMaterial = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
 						`Temp/${strFName}.arm.txt`, [division.name, city, "Food"]);
 					//log(ns, " " + " @City= " + city + " Food" + " => " + formatNumber(thisMaterial.stored));
 					let nFood = thisMaterial.stored;
 					thisMaterial = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
 						`Temp/${strFName}.arm.txt`, [division.name, city, "Plants"]);
 					let nPlants = thisMaterial.stored;
-					if (nFood > 100 || nPlants > 100) { //Stop produce but still sell
-						await setEmployee(ns, division, city, 0, 0, 3, 2, 1, 3);
-					} else { //Start produce
-						await setEmployee(ns, division, city, 3, 2, 2, 2, 0, 0);
+					if (division.type == "Agriculture") {
+						if (isStoFull) { //Stop produce but still sell
+							await setEmployee(ns, division, city, 0, 0, 3, 2, 1, 3);
+						} else { //Start produce
+							await setEmployee(ns, division, city, 3, 2, 2, 2, 0, 0);
+						}
+					} else if (division.type == "Chemical") {
+						if (isStoFull) { //Stop produce but R&D
+							await setEmployee(ns, division, city, 0, 0, 0, 2, 5, 2);
+						} else { //Start produce but no sale man
+							await setEmployee(ns, division, city, 3, 2, 0, 2, 2, 0);
+						}
 					}
 				}
 			}
@@ -599,9 +721,9 @@ async function initOfficeParty(ns, division) {
 		strFName = "corporation.getOffice"
 		let constOffice = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
 			`Temp/${strFName}.arm.txt`, [division.name, city]);
-		log(ns, " constOffice.avgMorale => " + formatNumber(constOffice.avgMorale) + " of city => " + city);
-		log(ns, " constOffice.avgEnergy => " + formatNumber(constOffice.avgEnergy) + " of city => " + city);
-		log(ns, " constOffice.totalExp  => " + formatNumber(constOffice.totalExperience) + " of city => " + city);
+		//log(ns, " constOffice.avgMorale => " + formatNumber(constOffice.avgMorale) + " of city => " + city);
+		//log(ns, " constOffice.avgEnergy => " + formatNumber(constOffice.avgEnergy) + " of city => " + city);
+		//log(ns, " constOffice.totalExp  => " + formatNumber(constOffice.totalExperience) + " of city => " + city);
 
 		if (constOffice.avgMorale < 97) {
 			strFName = "corporation.throwParty"
@@ -623,14 +745,65 @@ async function initOfficeParty(ns, division) {
  * @param {Division} division */
 async function reportProduction(ns, division) {
 	let strFName = "";
+	let avgMo = 0, avgEn = 0, tolEx = 0, numCity = 0;
 	for (const city of cities) {
-		strFName = "corporation.getMaterial"
-		let thisMaterial = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
-			`Temp/${strFName}.arm.txt`, [division.name, city, "Food"]);
-		log(ns, " " + " @ " + city.charAt(0) + " Food  " + " => " + pad_str(formatNumberShort(thisMaterial.stored), 7));
-		thisMaterial = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
-			`Temp/${strFName}.arm.txt`, [division.name, city, "Plants"]);
-		log(ns, " " + " @ " + city.charAt(0) + " Plants" + " => " + pad_str(formatNumberShort(thisMaterial.stored), 7));
+		strFName = "corporation.getOffice"
+		let thisOffice = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+			`Temp/${strFName}.arm.txt`, [division.name, city]);
+		numCity++;
+		avgMo += thisOffice.avgMorale;
+		avgEn += thisOffice.avgEnergy;
+		tolEx += thisOffice.totalExperience;
+	}
+	if (numCity > 0) {
+		avgMo = avgMo / numCity;
+		avgEn = avgEn / numCity;
+	}
+	log(ns, " "
+		+ " == Report of " + division.name.slice(0, 4)
+		+ "(" + division.type.slice(0, 4) + ")"
+		+ ",Mo=" + formatNumberShort(avgMo, 4, 1)
+		+ ",En=" + formatNumberShort(avgEn, 4, 1)
+		+ ",Ex=" + formatNumberShort(tolEx, 4, 1)
+		+ ",Ml=" + formatNumberShort(division.productionMult, 4, 1)
+		+ ",Rp=" + formatNumberShort(division.researchPoints, 4, 1)
+	);
+	log(ns, " "
+		+ "  @    Q Prod stock sell prod   MP  dem  com    Warehouse    Lv"
+	);
+	for (const city of cities) {
+		strFName = "corporation.getWarehouse"
+		let inWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+			`Temp/${strFName}.arm.txt`, [division.name, city]);
+		strFName = "corporation.getIndustryData";
+		let inCIndData = null;
+		inCIndData = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+			`Temp/${strFName}.arm.txt`, [division.type]);
+
+		for (let i = 0; i < inCIndData.producedMaterials.length; i++) {
+			strFName = "corporation.getMaterial"
+			let inMat = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
+				`Temp/${strFName}.arm.txt`, [division.name, city, inCIndData.producedMaterials[i]]);
+			log(ns, " "
+				+ " " + city.charAt(0) + city.charAt(1)
+				+ " " + pad_str(formatNumberShort(inMat.quality, 3), 4)
+				+ " " + pad_str(inCIndData.producedMaterials[i].slice(0, 5), 5)
+				+ " " + pad_str(formatNumberShort(inMat.stored, 2, 1), 4)
+				+ " " + pad_str(formatNumberShort(inMat.actualSellAmount, 2, 1), 4)
+				+ " " + pad_str(formatNumberShort(inMat.productionAmount, 2, 1), 4)
+				+ " " + pad_str(formatNumberShort(inMat.marketPrice, 2, 1), 4)
+				+ " " + pad_str(formatNumberShort(inMat.demand, 2, 1), 4)
+				+ " " + pad_str(formatNumberShort(inMat.competition, 2, 1), 4)
+				//+ " " + pad_str(formatNumberShort(inMat.desiredSellAmount, 2, 1), 4) //NaN
+				//+ " " + pad_str(formatNumberShort(inMat.desiredSellPrice, 2, 1), 4) //NaN
+				//+ " " + pad_str(inMat.exports.division, 8) //Object
+				+ " " + pad_str(formatNumberShort(inWH.sizeUsed, 2, 1), 4)
+				+ "/" + pad_str(formatNumberShort(inWH.size, 2, 1), 4)
+				+ "(" + pad_str(formatNumberShort(inWH.sizeUsed / inWH.size, 2, 1), 3) + ")"
+				+ " " + pad_str(formatNumberShort(inWH.level, 2, 1), 3) + ""
+			);
+
+		}
 	}
 }
 
@@ -656,60 +829,146 @@ async function phaseAdvancing(ns, division) {
 	let numTarget = 130e9;
 	strFName = "corporation.getInvestmentOffer"
 	cuInvOffer = await getNsDataThroughFile(ns, `ns.${strFName}()`);
-	if (cuInvOffer.round == 1) numTarget = 141e9;
-	if (cuInvOffer.round == 2) numTarget = 1.81e12;
-	if (cuInvOffer.round == 3) numTarget = 5.01e12;
+	if (cuInvOffer.round == 1) numTarget = 143e9;
+	if (cuInvOffer.round == 2) numTarget = 1.71e12;
+	if (cuInvOffer.round == 3) numTarget = 8.31e12;
 	if (cuInvOffer.round == 4) numTarget = 1.01e15;
 
 	log(ns, ""
-		+ " R " + cuInvOffer.round
-		+ " S " + formatNumberShort(cuInvOffer.shares)
-		+ " F " + formatMoney(cuInvOffer.funds)
-		+ " T " + formatMoney(numTarget));
+		+ ",Ro " + cuInvOffer.round
+		+ ",Sh " + formatNumberShort(cuInvOffer.shares)
+		+ ",Of " + formatMoney(cuInvOffer.funds)
+		+ ",Tg " + formatMoney(numTarget)
+	);
 	//log(ns, " " + "cuInvOffer.funds" + " => " + formatMoney(cuInvOffer.funds) + " target => " + formatMoney(numTarget));
 	//log(ns, " " + "cuInvOffer.round" + " => " + cuInvOffer.round);
 	//log(ns, " " + "cuInvOffer.shares" + " => " + formatNumberShort(cuInvOffer.shares));
 	strFName = "corporation.getCorporation"
 	let cc = await getNsDataThroughFile(ns, `ns.${strFName}()`);
-	log(ns, ""
-		+ " V " + formatMoney(cc.valuation)
-		+ " F " + formatMoney(cc.funds)
-		+ " S " + formatMoney(cc.sharePrice)
-		+ " Tax " + cc.dividendTax);
 	let ownerShares = cc.totalShares - cc.investorShares - cc.issuedShares;
 	log(ns, ""
-		+ " T " + formatNumberShort(cc.totalShares)
-		+ " I " + formatNumberShort(cc.investorShares)
-		+ " S " + formatNumberShort(cc.issuedShares)
-		+ " O " + formatNumberShort(ownerShares));
+		+ ",Va " + pad_str(formatMoney(cc.valuation), 8)
+		+ ",SP " + pad_str(formatMoney(cc.sharePrice), 8)
+		+ ",Tax " + cc.dividendTax
+		+ ",DR " + cc.dividendRate
+		+ ",DE " + formatNumberShort(cc.dividendEarnings)
+	);
 	log(ns, ""
-		+ " S " + formatMoney((ownerShares - 1e6) * cc.sharePrice * 4 / 5)
-		+ " R " + cc.dividendRate
-		+ " E " + formatNumberShort(cc.dividendEarnings)
-		+ " C " + formatDuration(cc.shareSaleCooldown * 200));
+		+ ",Fu " + pad_str(formatMoney(cc.funds), 8)
+		+ ",Re " + pad_str(formatMoney(cc.revenue), 8)
+		+ ",Ex " + pad_str(formatMoney(cc.expenses), 8)
+		+ ",Pf " + pad_str(formatMoney(cc.revenue - cc.expenses), 8)
+	);
+	log(ns, ""
+		+ "Share "
+		+ ",T " + formatNumberShort(cc.totalShares)
+		+ ",I " + formatNumberShort(cc.investorShares)
+		+ ",S " + formatNumberShort(cc.issuedShares)
+		+ ",O " + formatNumberShort(ownerShares)
+	);
+	log(ns, ""
+		+ ",SS " + formatMoney((ownerShares - 1e6) * cc.sharePrice * 4 / 5)
+		+ ",CD " + formatDuration(cc.shareSaleCooldown * 200)
+	);
 	if (cuInvOffer.round == 1 && cuInvOffer.funds > numTarget) {
 		strFName = "corporation.acceptInvestmentOffer"
 		let boolAccOffer = null;
 		boolAccOffer = await getNsDataThroughFile(ns, `ns.${strFName}()`);
 		log(ns, " " + "boolAccOffer" + " => " + boolAccOffer);
-		log(ns, " " + "get Offer" + " => " + formatMoney(cuInvOffer.funds));
-		log(ns, " " + "get round" + " => " + cuInvOffer.round);
-		log(ns, " " + "cuInvOffer.shares" + " => " + formatNumberShort(cuInvOffer.shares));
+		persist_log(ns, ""
+			+ "Accept Offer R=" + cuInvOffer.round
+			+ " money=" + formatMoney(cuInvOffer.funds)
+		);
 	} else if (cuInvOffer.round == 2 && cuInvOffer.funds > numTarget) {
 		strFName = "corporation.acceptInvestmentOffer"
 		let boolAccOffer = null;
 		boolAccOffer = await getNsDataThroughFile(ns, `ns.${strFName}()`);
-		log(ns, " " + "get Offer" + " => " + formatMoney(cuInvOffer.funds));
-		log(ns, " " + "get round" + " => " + cuInvOffer.round);
-		log(ns, " " + "cuInvOffer.shares" + " => " + formatNumberShort(cuInvOffer.shares));
+		log(ns, " " + "boolAccOffer" + " => " + boolAccOffer);
+		persist_log(ns, ""
+			+ "Accept Offer R=" + cuInvOffer.round
+			+ " money=" + formatMoney(cuInvOffer.funds)
+		);
 	} else if (cuInvOffer.round == 3 && cuInvOffer.funds > numTarget) {
 		strFName = "corporation.acceptInvestmentOffer"
 		let boolAccOffer = null;
 		boolAccOffer = await getNsDataThroughFile(ns, `ns.${strFName}()`);
-		log(ns, " " + "get Offer" + " => " + formatMoney(cuInvOffer.funds));
-		log(ns, " " + "get round" + " => " + cuInvOffer.round);
-		log(ns, " " + "cuInvOffer.shares" + " => " + formatNumberShort(cuInvOffer.shares));
+		log(ns, " " + "boolAccOffer" + " => " + boolAccOffer);
+		persist_log(ns, ""
+			+ "Accept Offer R=" + cuInvOffer.round
+			+ " money=" + formatMoney(cuInvOffer.funds)
+		);
+	} else if (cuInvOffer.round == 4 && cuInvOffer.funds > numTarget) {
+		strFName = "corporation.acceptInvestmentOffer"
+		let boolAccOffer = null;
+		boolAccOffer = await getNsDataThroughFile(ns, `ns.${strFName}()`);
+		log(ns, " " + "boolAccOffer" + " => " + boolAccOffer);
+		persist_log(ns, ""
+			+ "Accept Offer R=" + cuInvOffer.round
+			+ " money=" + formatMoney(cuInvOffer.funds)
+		);
 	}
+	if (options['sellshare-1hr'] && (cc.shareSaleCooldown <= 0)) {
+		/*
+		1. Go Public 1m share
+		2. buy back 1m share if possible
+		3. sell all share for player money
+		4. re-create corporation
+		*/
+		strFName = "corporation.goPublic"
+		let numShare4Pub = 1e6;
+		let boolGoPublic = null;
+		boolGoPublic = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+			`Temp/${strFName}.arm.txt`, [numShare4Pub]);
+		strFName = "corporation.buyBackShares"
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+			`Temp/${strFName}.arm.txt`, [numShare4Pub]);
+		strFName = "corporation.getCorporation"
+		cc = await getNsDataThroughFile(ns, `ns.${strFName}()`);
+		ownerShares = cc.totalShares - cc.investorShares - cc.issuedShares;
+		const player = await getPlayerInfo(ns);
+		let curMoney = player.money;
+		strFName = "corporation.sellShares"
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+			`Temp/${strFName}.arm.txt`, [ownerShares - 1e6]);
+		player = await getPlayerInfo(ns);
+		let difMoney = player.money - curMoney
+		persist_log(ns, "Sell Share = " + formatMoney(difMoney));
+		if ((3 in unlockedSFs)) {
+			strFName = "corporation.createCorporation";
+			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])||true`,
+				`Temp/${strFName}.arm.txt`, ["Eternity", false]);
+		} else {
+			strFName = "corporation.createCorporation";
+			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])||true`,
+				`Temp/${strFName}.arm.txt`, ["Eternity", true]);
+		}
+	}
+}
+
+/** 
+ * @param {NS} ns
+ * @param {CorpIndustryName} industryName */
+async function printCorpIndustryDataConst(ns, industryName) {
+	let strFName = "";
+	strFName = "corporation.getIndustryData";
+	//ns.corporation.getIndustryData();
+	let locCorpIndustryData = null;
+	locCorpIndustryData = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+		`Temp/${strFName}.arm.txt`, [industryName]);
+	log(ns, ""
+		+ ",Ind=" + industryName
+		+ ",HWr=" + locCorpIndustryData.hardwareFactor
+		+ ",RBo=" + locCorpIndustryData.robotFactor
+		+ ",AIc=" + locCorpIndustryData.aiCoreFactor
+		+ ",REs=" + locCorpIndustryData.realEstateFactor
+		+ ",ADv=" + locCorpIndustryData.advertisingFactor
+		+ ",SCi=" + locCorpIndustryData.scienceFactor
+	);
+}
+/** 
+ * @param {NS} ns
+ * @param {Division} division */
+async function printConst(ns, division) {
 	const corpConst = ns.corporation.getConstants(); //CorpConstants
 	//ns.tprint("corpConst.industryNames => " + corpConst.industryNames);
 	//baseProductProfitMult
@@ -725,9 +984,9 @@ async function phaseAdvancing(ns, division) {
 		+ " EmpRis=" + corpConst.employeeRaiseAmount
 		+ " IniSha=" + formatNumberShort(corpConst.initialShares)
 		+ " EmpTea=" + formatMoney(corpConst.teaCostPerEmployee)
-		+ " ShaPri=" + formatNumberShort(corpConst.sharesPerPriceUpdate));
+		+ " ShaPri=" + formatNumberShort(corpConst.sharesPerPriceUpdate)
+	);
 }
-
 /** 
  * @param {NS} ns
  * @param {Division} division */
@@ -757,6 +1016,24 @@ function pad_str(string, len) {
 	/*
 	Prepends the requested padding to the string.
 	*/
-	var pad = "                                "
+	var pad = "                                   "
 	return String(pad + string).slice(-len)
+}
+
+/** Append the specified text (with timestamp) to a persistent log in the home directory
+ * @param {String} text
+ * @param {NS} ns */
+function persist_log(ns, text) {
+	ns.write(persistCorpLog, `${(new Date()).toISOString().substring(0, 19)} ${text}\n`, "a")
+}
+
+// Replacements for player properties deprecated since 2.3.0
+function getTimeInAug() { return Date.now() - resetInfo.lastAugReset; }
+function getTimeInBitnode() { return Date.now() - resetInfo.lastNodeReset; }
+
+/** Ram-dodge getting player info.
+ * @param {NS} ns
+ * @returns {Promise<Player>} */
+async function getPlayerInfo(ns) {
+	return await getNsDataThroughFile(ns, `ns.getPlayer()`);
 }
