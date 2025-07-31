@@ -24,7 +24,7 @@ let homeRam = 0; // Amount of RAM on the home server, last we checked
 
 /** @param {NS} ns **/
 export async function main(ns) {
-
+	ns.disableLog('ALL');
 
 	/** @param {NS} ns **/
 	async function startUp(ns) {
