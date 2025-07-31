@@ -1,5 +1,5 @@
 import {
-	formatMoney, getNsDataThroughFile
+	formatMoney, getNsDataThroughFile, log
 } from './helpers.js'
 
 /** 
@@ -50,7 +50,7 @@ function pad_str(string, len) {
 	/*
 	Prepends the requested padding to the string.
 	*/
-	var pad = "                      "
+	var pad = "                                "
 	return String(pad + string).slice(-len)
 }
 
@@ -70,15 +70,40 @@ async function get_server_data(ns, server) {
 	var sServer = await getNsDataThroughFile(ns, 'ns.getServer(ns.args[0])', null, [server]);
 	var core = sServer.cpuCores;
 	//ns.tprint("S:"+server);
+	/*
+	Basic Colors (8-color palette):
+	\u001b[30m to \u001b[37m for foreground colors (black to white).
+	\u001b[40m to \u001b[47m for background colors.
+	\u001b[0m resets the color.
+	256-Color Palette:
+	\u001b[38;5;COLOR_CODEm for foreground colors, where COLOR_CODE is a number from 0-255.
+	\u001b[48;5;COLOR_CODEm for background colors.
+	True Color (RGB):
+	\u001b[38;2;R;G;Bm for foreground colors, where R, G, B are 0-255.
+	\u001b[48;2;R;G;Bm for background colors.
+	*/
+	// \u001b[30m ==> Gray-Black
+	// \u001b[31m ==> Red
+	// \u001b[32m ==> Green
+	// \u001b[33m ==> Yellow
+	// \u001b[34m ==> Blue
+	// \u001b[35m ==> Magenta
+	// \u001b[36m ==> Cyan
+	// \u001b[37m ==> White
 
-	return `${pad_str(server, 20)}` +
-		` $:${pad_str(formatMoney(moneyAvailable, 3, 2), 7)}/${pad_str(formatMoney(moneyMax, 3, 2), 7)}(${pad_str((moneyAvailable / moneyMax).toFixed(2), 4)})` +
-		` Sec:${pad_str(securityLvl.toFixed(2), 6)}(${pad_str(securityMin, 2)})` +
-		` RAM:${pad_str(parseInt(ram), 4)}` +
-		` Act:${pad_str(get_action(ns, server), 7)}` +
-		` H:${pad_str(hackLvl, 4)}` +
-		` G:${pad_str(growth, 2)}` +
-		` C:${pad_str(core, 2)}`
+	var txtcolor = `\u001b[32m`;
+	if (moneyAvailable / moneyMax > 0.75) txtcolor = `\u001b[36m`;
+
+	return ``
+		+ txtcolor
+		+ `${pad_str(server, 20)}`
+		+ `${pad_str(formatMoney(moneyAvailable, 3, 2), 7)}/${pad_str(formatMoney(moneyMax, 3, 2), 7)}(${pad_str((moneyAvailable / moneyMax).toFixed(2), 4)})`
+		+ ` ${pad_str(securityLvl.toFixed(2), 6)}(${pad_str(securityMin, 2)})`
+		+ ` ${pad_str(parseInt(ram), 4)}`
+		+ ` ${pad_str(get_action(ns, server), 7)}`
+		+ ` ${pad_str(hackLvl, 4)}`
+		+ ` ${pad_str(growth, 2)}`
+		+ ` ${pad_str(core, 2)}`
 }
 
 function get_servers(ns) {
@@ -95,18 +120,37 @@ function get_servers(ns) {
 }
 
 export async function main(ns) {
-	var servers = get_servers(ns)
-	var stats = {}
-	// For each server in servers, get the server data and add to our Hash Table.
-	for (var server of servers) {
-		stats[parseInt(ns.getServerMaxMoney(server))] = await get_server_data(ns, server)
-	}
-	// Sort each server based on how much money it holds.
-	var keys = Object.keys(stats)
-	keys.sort((a, b) => a - b)
-	// Print the results
-	for (var i in keys) {
-		var key = keys[i]
-		ns.tprint(stats[key])
+	ns.disableLog('ALL');
+	while (true) {
+		var servers = get_servers(ns)
+		var stats = {}
+		// For each server in servers, get the server data and add to our Hash Table.
+		for (var server of servers) {
+			stats[parseInt(ns.getServerMaxMoney(server))] = await get_server_data(ns, server)
+		}
+		// Sort each server based on how much money it holds.
+		var keys = Object.keys(stats)
+		keys.sort((a, b) => a - b)
+		// Print header
+		log(ns, "============"
+			+ " SERVER " + "==="
+			+ " MONEY cur/max(%)" + "=="
+			+ " SEC(min) " + ""
+			+ "  RAM" + ""
+			+ " Action " + ""
+			+ " Hack" + ""
+			+ " Gr" + ""
+			+ " Co " + ""
+		);
+		// Print the results
+		for (var i in keys) {
+			var key = keys[i]
+			//ns.tprint(stats[key])
+			log(ns, stats[key]);
+			//log(ns, `WARNING: The "${confName}" overriding "${key}" value: ${JSON.stringify(override)} has a different type (${typeof override}) than the ` +
+			//`current default value ${JSON.stringify(match[1])} (${typeof match[1]}). The resulting behaviour may be unpredictable.`, false, 'warning');
+			//log(ns, stats[key], false, 'warning')
+		}
+		await ns.sleep(1 * 1000);
 	}
 }
