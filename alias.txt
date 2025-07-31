@@ -1,7 +1,7 @@
 alias ph="run /param/hack.js";
 alias pg="run /param/grow.js";
 alias pw="run /param/weak.js";
-alias st="run /gs.js";
+alias st="run /gs.js --tail";
 alias hw="run /v2/hwgw.js";
 alias hn="run /v2/hnbot.js";
 alias de="run /v1/deployer.js";
@@ -44,3 +44,4 @@ alias sles="run sleeve_short.js";
 alias sto="run stockmaster.js";
 alias dev="run dev-console.js";
 alias corp="run corporation.js --tail";
+alias graf="run grafting.js --tail";
