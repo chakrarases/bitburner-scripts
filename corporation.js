@@ -20,6 +20,22 @@ const autoPricesByKey = {};
 //const cities = ["Sector-12", "Aevum", "Volhaven"];
 //const cities = ["Sector-12", "Aevum", "Volhaven", "Chongqing", "New Tokyo"];
 const cities = ["Sector-12", "Aevum", "Volhaven", "Chongqing", "New Tokyo", "Ishima"];
+const corpIndustryNames = ["Spring Water"
+	, "Water Utilities"
+	, "Agriculture"
+	, "Fishing"
+	, "Mining"
+	, "Refinery"
+	, "Restaurant"
+	, "Tobacco"
+	, "Chemical"
+	, "Pharmaceutical"
+	, "Computer Hardware"
+	, "Robotics"
+	, "Software"
+	, "Healthcare"
+	, "Real Estate"
+];
 
 const argsSchema = [ // The set of all command line arguments
 	['sellshare-1hr', false], // If true once Cooldown reach zero, sellallshare and re-create corp
@@ -210,6 +226,11 @@ export async function main(ns) {
 						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])||true`,
 							`Temp/${strFName}.arm.txt`, ["Restaurant", "Barbgon"]);
 					}
+					if (corpInfo.divisions.length < 5 && corpInfo.funds >= 20e12) { //require 20t money
+						strFName = "corporation.expandIndustry";
+						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])||true`,
+							`Temp/${strFName}.arm.txt`, ["Healthcare", "BDMS"]);
+					}
 				}
 				corpInfo = await getNsDataThroughFile(ns, 'ns.corporation.getCorporation()'); //CorporationInfo
 
@@ -390,6 +411,36 @@ export async function main(ns) {
 						await turnOnMarketTA12(ns, barbInfo);
 						await reportProduction(ns, barbInfo);
 					}
+					if (corpInfo.divisions[4] == "BDMS" && corpInfo.funds >= 20e12) { //Require 2t money
+						strFName = "corporation.getDivision";
+						let bdmsInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+							`Temp/${strFName}.arm.txt`, [corpInfo.divisions[4]]); //BDMS
+						await initCities(ns, bdmsInfo);
+						await initOffice(ns, bdmsInfo);
+						await initOfficeParty(ns, bdmsInfo);
+						/*
+						if (!hasExport) {
+							ns.write("arm.corp.weed.sync.barb.txt", "none", "w");
+						} else {
+							if (ns.read("arm.corp.weed.sync.barb.txt") != "sync") {
+								await syncWeedBarb(ns, weedInfo, bdmsInfo);
+								ns.write("arm.corp.weed.sync.barb.txt", "sync", "w");
+							}
+						}
+						*/
+						await initSellPrice(ns, bdmsInfo);
+						await buyBoostMaterial(ns, bdmsInfo);
+						await buyBoostMaterial(ns, bdmsInfo);
+						await doResearch(ns, bdmsInfo, "Hi-Tech R&D Laboratory");
+						await doResearch(ns, bdmsInfo, "Market-TA.I");
+						await doResearch(ns, bdmsInfo, "Market-TA.II");
+						await doResearch(ns, bdmsInfo, "uPgrade: Fulcrum");
+						await doResearch(ns, bdmsInfo, "uPgrade: Capacity.I");
+						await doResearch(ns, bdmsInfo, "uPgrade: Capacity.II");
+						await doProduct(ns, bdmsInfo, "Hospital"); // Product Name please longer than 4 characters
+						await turnOnMarketTA12(ns, bdmsInfo);
+						await reportProduction(ns, bdmsInfo);
+					}
 				}
 				//Warehouse API
 				//await initSellPrice(ns, divisionInfo);
@@ -402,6 +453,9 @@ export async function main(ns) {
 				//await printCorpIndustryDataConst(ns, "Chemical");
 				//await printCorpIndustryDataConst(ns, "Tobacco");
 				//await printCorpIndustryDataConst(ns, "Restaurant");
+				//for (const i of corpIndustryNames) {
+				//	await printCorpIndustryDataConst(ns, i);
+				//}
 				//await printConst(ns, divisionInfo);
 			}
 		} else {
@@ -987,6 +1041,21 @@ async function buyBoostMaterial(ns, division) {
 				await setupMaterial(ns, division, city, "AI Cores", 40000);
 				await setupMaterial(ns, division, city, "Real Estate", 200000);
 			}
+		} else if (division.name == "BDMS") { //Healthcare
+			strFName = "corporation.getWarehouse"; //Warehouse
+			let afterWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+				`Temp/${strFName}.arm.txt`, [division.name, city]);
+			if (cuInvOffer.round == 4 && afterWH.level >= 29) {
+				await setupMaterial(ns, division, city, "Hardware", 30000);
+				await setupMaterial(ns, division, city, "Robots", 0);
+				await setupMaterial(ns, division, city, "AI Cores", 0);
+				await setupMaterial(ns, division, city, "Real Estate", 300000);
+			} else if (cuInvOffer.round >= 5 && afterWH.level >= 29) {
+				await setupMaterial(ns, division, city, "Hardware", 30000);
+				await setupMaterial(ns, division, city, "Robots", 0);
+				await setupMaterial(ns, division, city, "AI Cores", 0);
+				await setupMaterial(ns, division, city, "Real Estate", 300000);
+			}
 		}
 	}
 }
@@ -1118,6 +1187,17 @@ async function initOffice(ns, division) {
 							}
 						}
 					} else if (division.type == "Restaurant") {
+						if (isStoFull) { //Stop produce but R&D
+							//await setEmployee(ns, division, city, 0, 0, 0, 2, 5 + ((maxOfficelv / 9) - 1) * 9, 2);
+							await setEmployee(ns, division, city, 3 + Math.floor((maxOfficelv / 9) / 2) * 9, 2 + Math.floor((maxOfficelv / 9) / 2) * 9, 1, 2, 1, 0);
+						} else { //Start produce with saleman
+							if (city == "Sector-12") { // should be 27 employee
+								await setEmployee(ns, division, city, 3 + Math.floor((maxOfficelv / 9) / 2) * 9, 2 + Math.floor((maxOfficelv / 9) / 2) * 9, 1, 2, 1, 0);
+							} else {
+								await setEmployee(ns, division, city, 3, 2, 1, 2, 1 + ((maxOfficelv / 9) - 1) * 9, 0);
+							}
+						}
+					} else if (division.type == "Healthcare") {
 						if (isStoFull) { //Stop produce but R&D
 							//await setEmployee(ns, division, city, 0, 0, 0, 2, 5 + ((maxOfficelv / 9) - 1) * 9, 2);
 							await setEmployee(ns, division, city, 3 + Math.floor((maxOfficelv / 9) / 2) * 9, 2 + Math.floor((maxOfficelv / 9) / 2) * 9, 1, 2, 1, 0);
@@ -1260,7 +1340,7 @@ async function reportProduction(ns, division) {
 		+ ",Rp=" + formatNumberShort(division.researchPoints, 4, 1)
 	);
 	ns.print(" "
-		+ "  @     Q Prod stock sell prod   MP  dem  com    Warehouse   Lv"
+		+ "  @     Q Prod stock sell prod   MP  dem  com    Warehouse   Lv %Develop"
 	);
 	for (const city of cities) {
 		if (!division.makesProducts) {
@@ -1301,7 +1381,7 @@ async function reportProduction(ns, division) {
 					+ "/" + pad_str(formatNumberShort(inWH.size, 2, 1), 4)
 					+ "(" + pad_str(formatNumberShort(inWH.sizeUsed / inWH.size * 100, 2, 1), 2) + ")"
 					+ " " + pad_str(formatNumberShort(inWH.level, 2, 1), 3) + ""
-					+ " " + pad_str(formatNumberShort(chkPrice, 2, 1), 4)
+					//+ " " + pad_str(formatNumberShort(chkPrice, 2, 1), 4)
 				);
 			}
 		} else {
@@ -1339,7 +1419,7 @@ async function reportProduction(ns, division) {
 						+ "(" + pad_str(formatNumberShort(inWH.sizeUsed / inWH.size * 100, 2, 1), 2) + ")"
 						+ " " + pad_str(formatNumberShort(inWH.level, 2, 1), 3) + ""
 						+ " " + pad_str(formatNumberShort(inProd.developmentProgress, 4, 1), 4)
-						+ " " + pad_str(formatNumberShort(chkPrice, 2, 1), 4)
+						//+ " " + pad_str(formatNumberShort(chkPrice, 2, 1), 4)
 					);
 				}
 			}
@@ -1553,12 +1633,15 @@ async function printCorpIndustryDataConst(ns, industryName) {
 		`Temp/${strFName}.arm.txt`, [industryName]);
 	ns.print(""
 		+ ",Ind=" + industryName
+		+ ",Cost=" + formatNumberShort(locCorpIndustryData.startingCost)
 		+ ",HWr=" + locCorpIndustryData.hardwareFactor
 		+ ",RBo=" + locCorpIndustryData.robotFactor
 		+ ",AIc=" + locCorpIndustryData.aiCoreFactor
 		+ ",REs=" + locCorpIndustryData.realEstateFactor
 		+ ",ADv=" + locCorpIndustryData.advertisingFactor
 		+ ",SCi=" + locCorpIndustryData.scienceFactor
+		+ ",Mate=" + locCorpIndustryData.requiredMaterials
+		+ ",Prod=" + locCorpIndustryData.producedMaterials
 	);
 }
 /** 
