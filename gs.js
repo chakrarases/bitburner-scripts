@@ -91,8 +91,12 @@ async function get_server_data(ns, server) {
 	// \u001b[36m ==> Cyan
 	// \u001b[37m ==> White
 
-	var txtcolor = `\u001b[32m`;
-	if (moneyAvailable / moneyMax > 0.75) txtcolor = `\u001b[36m`;
+	var txtcolor = `\u001b[0m`;
+	if (moneyAvailable / moneyMax > 0.75) {
+		txtcolor = `\u001b[36m`;
+	} else if (moneyAvailable / moneyMax < 0.05) {
+		txtcolor = `\u001b[30m`;
+	}
 
 	return ``
 		+ txtcolor
@@ -132,7 +136,7 @@ export async function main(ns) {
 		var keys = Object.keys(stats)
 		keys.sort((a, b) => a - b)
 		// Print header
-		log(ns, "============"
+		log(ns, ""
 			+ " SERVER " + "==="
 			+ " MONEY cur/max(%)" + "=="
 			+ " SEC(min) " + ""
@@ -146,7 +150,7 @@ export async function main(ns) {
 		for (var i in keys) {
 			var key = keys[i]
 			//ns.tprint(stats[key])
-			log(ns, stats[key]);
+			ns.print(stats[key]);
 			//log(ns, `WARNING: The "${confName}" overriding "${key}" value: ${JSON.stringify(override)} has a different type (${typeof override}) than the ` +
 			//`current default value ${JSON.stringify(match[1])} (${typeof match[1]}). The resulting behaviour may be unpredictable.`, false, 'warning');
 			//log(ns, stats[key], false, 'warning')
