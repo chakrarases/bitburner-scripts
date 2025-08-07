@@ -106,6 +106,7 @@ export async function main(ns) {
 	//Debuging and finding the right API
 	/** @param {NS} ns **/
 	async function main_loop(ns) {
+		//TODO: Refactory to reduce repeating functions
 		const player = await getPlayerInfo(ns);
 		//log(ns, "");
 		//ns.tprint("player.money == " + formatMoney(player.money));
@@ -315,6 +316,7 @@ export async function main(ns) {
 				} else if (cuInvOffer.round >= 4) {
 					await upgradesCorp(ns, "DreamSense", 4);
 					if (corpInfo.funds >= 2e12) {
+						await upgradesCorp(ns, "DreamSense", 10);
 						await upgradesCorp(ns, "Project Insight", 40);
 					}
 					strFName = "corporation.getDivision";
@@ -418,16 +420,16 @@ export async function main(ns) {
 						await initCities(ns, bdmsInfo);
 						await initOffice(ns, bdmsInfo);
 						await initOfficeParty(ns, bdmsInfo);
-						/*
+						
 						if (!hasExport) {
-							ns.write("arm.corp.weed.sync.barb.txt", "none", "w");
+							ns.write("arm.corp.weed.sync.bdms.txt", "none", "w");
 						} else {
-							if (ns.read("arm.corp.weed.sync.barb.txt") != "sync") {
-								await syncWeedBarb(ns, weedInfo, bdmsInfo);
-								ns.write("arm.corp.weed.sync.barb.txt", "sync", "w");
+							if (ns.read("arm.corp.weed.sync.bdms.txt") != "sync") {
+								await syncWeedBdms(ns, weedInfo, bdmsInfo);
+								ns.write("arm.corp.weed.sync.bdms.txt", "sync", "w");
 							}
 						}
-						*/
+						
 						await initSellPrice(ns, bdmsInfo);
 						await buyBoostMaterial(ns, bdmsInfo);
 						await buyBoostMaterial(ns, bdmsInfo);
@@ -447,6 +449,7 @@ export async function main(ns) {
 				//await buyBoostMaterial(ns, divisionInfo);
 				//await reportProduction(ns, divisionInfo);
 				await phaseAdvancing(ns);
+				ns.hacknet.spendHashes("Exchange for Corporation Research");
 
 				//Uncomment if you want to see all factors/constant about Corporation/Divisions
 				//await printCorpIndustryDataConst(ns, "Agriculture");
@@ -511,6 +514,9 @@ async function initCities(ns, division) {
 				maxWHlv = 19;
 			} else if (cuInvOffer.round >= 4) {
 				maxWHlv = 29;
+				if (division.name == "BDMS"){
+					maxWHlv = 50;
+				}
 			}
 			strFName = "corporation.getWarehouse"; //
 			let constWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
@@ -597,6 +603,24 @@ async function syncWeedBarb(ns, weedDiv, barbDiv) {
 		strFName = "corporation.setSmartSupplyOption"
 		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3])||true`,
 			`Temp/${strFName}.arm.txt`, [barbDiv.name, city, "Food", "imports"]);
+	}
+}
+
+/** 
+ * @param {NS} ns
+ * @param {Division} weedDiv
+ * @param {Division} bdmsDiv */
+async function syncWeedBdms(ns, weedDiv, bdmsDiv) {
+	for (const city of cities) {
+		strFName = "corporation.exportMaterial"
+		//exportMaterial(sourceDivision, sourceCity, targetDivision, targetCity, materialName, amt)
+		//Weed send to Ciga Plants
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4],ns.args[5])||true`,
+			`Temp/${strFName}.arm.txt`, [weedDiv.name, city, bdmsDiv.name, city, "Food", "-IPROD"]);
+		//setSmartSupplyOption(divisionName, city, materialName, option)
+		strFName = "corporation.setSmartSupplyOption"
+		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3])||true`,
+			`Temp/${strFName}.arm.txt`, [bdmsDiv.name, city, "Food", "imports"]);
 	}
 }
 
