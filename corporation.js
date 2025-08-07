@@ -234,9 +234,9 @@ export async function main(ns) {
 
 				if (cuInvOffer.round == 1) {
 					await initCities(ns, divisionInfo);
-					await initWarehouse(ns, divisionInfo);
 					await initOffice(ns, divisionInfo);
 					await initOfficeParty(ns, divisionInfo);
+					await initSellPrice(ns, divisionInfo);
 					//Upgrades following to Lv2 := FocusWires, Neural Accelerators, Speech Processor Implants, Nuoptimal Nootropic Injector Implants
 					//await upgradesCorp(ns, upName, up2Lv);
 					await upgradesCorp(ns, "FocusWires", 2);
@@ -248,9 +248,9 @@ export async function main(ns) {
 					await reportProduction(ns, divisionInfo);
 				} else if (cuInvOffer.round == 2) {
 					await initCities(ns, divisionInfo);
-					await initWarehouse(ns, divisionInfo);
 					await initOffice(ns, divisionInfo);
 					await initOfficeParty(ns, divisionInfo);
+					await initSellPrice(ns, divisionInfo);
 					await buyBoostMaterial(ns, divisionInfo);
 					await reportProduction(ns, divisionInfo);
 				} else if (cuInvOffer.round == 3) {
@@ -272,8 +272,8 @@ export async function main(ns) {
 					await initOffice(ns, fertInfo);
 					await initOfficeParty(ns, fertInfo);
 					if (!hasExport) {
-						//await initWarehouse(ns, weedInfo);
-						//await initWarehouse(ns, fertInfo);
+						//await initSellPrice(ns, weedInfo);
+						//await initSellPrice(ns, fertInfo);
 						//purchaseUnlock(upgradeName)
 						strFName = "corporation.purchaseUnlock";
 						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
@@ -285,8 +285,8 @@ export async function main(ns) {
 							ns.write("arm.corp.weed.sync.fert.txt", "sync", "w");
 						}
 					}
-					await initWarehouse(ns, weedInfo);
-					await initWarehouse(ns, fertInfo);
+					await initSellPrice(ns, weedInfo);
+					await initSellPrice(ns, fertInfo);
 					await buyBoostMaterial(ns, weedInfo);
 					await buyBoostMaterial(ns, fertInfo);
 					await reportProduction(ns, weedInfo);
@@ -309,8 +309,8 @@ export async function main(ns) {
 					await initOffice(ns, fertInfo);
 					await initOfficeParty(ns, fertInfo);
 					if (!hasExport) {
-						//await initWarehouse(ns, weedInfo);
-						//await initWarehouse(ns, fertInfo);
+						//await initSellPrice(ns, weedInfo);
+						//await initSellPrice(ns, fertInfo);
 						//purchaseUnlock(upgradeName)
 						strFName = "corporation.purchaseUnlock";
 						await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
@@ -323,8 +323,8 @@ export async function main(ns) {
 							ns.write("arm.corp.weed.sync.fert.txt", "sync", "w");
 						}
 					}
-					await initWarehouse(ns, weedInfo);
-					await initWarehouse(ns, fertInfo);
+					await initSellPrice(ns, weedInfo);
+					await initSellPrice(ns, fertInfo);
 					await buyBoostMaterial(ns, weedInfo);
 					await buyBoostMaterial(ns, fertInfo);
 					await doResearch(ns, weedInfo, "Hi-Tech R&D Laboratory");
@@ -350,7 +350,7 @@ export async function main(ns) {
 								ns.write("arm.corp.weed.sync.ciga.txt", "sync", "w");
 							}
 						}
-						await initWarehouse(ns, cigaInfo);
+						await initSellPrice(ns, cigaInfo);
 						await buyBoostMaterial(ns, cigaInfo);
 						await doResearch(ns, cigaInfo, "Hi-Tech R&D Laboratory");
 						await doResearch(ns, cigaInfo, "Market-TA.I");
@@ -377,7 +377,7 @@ export async function main(ns) {
 								ns.write("arm.corp.weed.sync.barb.txt", "sync", "w");
 							}
 						}
-						await initWarehouse(ns, barbInfo);
+						await initSellPrice(ns, barbInfo);
 						await buyBoostMaterial(ns, barbInfo);
 						await buyBoostMaterial(ns, barbInfo);
 						await doResearch(ns, barbInfo, "Hi-Tech R&D Laboratory");
@@ -392,15 +392,17 @@ export async function main(ns) {
 					}
 				}
 				//Warehouse API
-				//await initWarehouse(ns, divisionInfo);
+				//await initSellPrice(ns, divisionInfo);
 				//await buyBoostMaterial(ns, divisionInfo);
 				//await reportProduction(ns, divisionInfo);
 				await phaseAdvancing(ns);
+
+				//Uncomment if you want to see all factors/constant about Corporation/Divisions
 				//await printCorpIndustryDataConst(ns, "Agriculture");
 				//await printCorpIndustryDataConst(ns, "Chemical");
 				//await printCorpIndustryDataConst(ns, "Tobacco");
 				//await printCorpIndustryDataConst(ns, "Restaurant");
-				await printConst(ns, divisionInfo);
+				//await printConst(ns, divisionInfo);
 			}
 		} else {
 			ns.tprint("== Cannot Create corp ==");
@@ -547,7 +549,8 @@ async function syncWeedBarb(ns, weedDiv, barbDiv) {
 /** 
  * @param {NS} ns
  * @param {Division} division */
-async function initWarehouse(ns, division) {
+async function initSellPrice(ns, division) {
+	//TODO: 
 	//let strFName = "";
 	let cuInvOffer = null;
 	strFName = "corporation.getInvestmentOffer"
@@ -777,9 +780,11 @@ async function doProduct(ns, division, txtProdName) {
 			}
 			return;
 		}
+		/*
 		ns.print(""
 			+ ",ProdLength=" + division.products.length
 		);
+		*/
 		for (let i = 0; i < division.maxProducts; i++) {
 			if (i == division.products.length) {
 				prefix = i + 1; fProdName = prefix + txtProdName;
@@ -800,10 +805,12 @@ async function doProduct(ns, division, txtProdName) {
 			}
 		}
 		// If reach here == full maxProducts
+		/*
 		ns.print(""
 			+ ",discontinueProduct=" + mProdName
 			+ ",minRating=" + minRating
 		);
+		*/
 		if (corpInfo.funds >= 2e9) {
 			//discontinueProduct(divisionName, productName)
 			strFName = "corporation.discontinueProduct";
@@ -892,6 +899,7 @@ async function turnOnMarketTA12(ns, division) {
  * @param {NS} ns
  * @param {Division} division */
 async function buyBoostMaterial(ns, division) {
+	//TODO: Refactory to use Class-variable for each division-type
 	//let strFName = "";
 	let cuInvOffer = null;
 	strFName = "corporation.getInvestmentOffer"
@@ -1297,41 +1305,43 @@ async function reportProduction(ns, division) {
 				);
 			}
 		} else {
-			strFName = "corporation.getWarehouse"
-			let inWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
-				`Temp/${strFName}.arm.txt`, [division.name, city]);
-			for (let i = 0; i < division.products.length; i++) {
-				strFName = "corporation.getProduct"
-				let inProd = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
-					`Temp/${strFName}.arm.txt`, [division.name, city, division.products[i]]);
-				const chkKey = `${division.name.slice(0, 4)}-`
-					+ `${city.slice(0, 2)}-`
-					+ `${inProd.name.slice(0, 5)}`;
-				const chkAutoPrice = autoPricesByKey[chkKey];
-				let chkPrice = 0;
-				if (chkAutoPrice) {
-					chkPrice = chkAutoPrice.price
+			if (city == "Sector-12") {
+				strFName = "corporation.getWarehouse"
+				let inWH = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+					`Temp/${strFName}.arm.txt`, [division.name, city]);
+				for (let i = 0; i < division.products.length; i++) {
+					strFName = "corporation.getProduct"
+					let inProd = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
+						`Temp/${strFName}.arm.txt`, [division.name, city, division.products[i]]);
+					const chkKey = `${division.name.slice(0, 4)}-`
+						+ `${city.slice(0, 2)}-`
+						+ `${inProd.name.slice(0, 5)}`;
+					const chkAutoPrice = autoPricesByKey[chkKey];
+					let chkPrice = 0;
+					if (chkAutoPrice) {
+						chkPrice = chkAutoPrice.price
+					}
+					ns.print(" "
+						+ " " + city.slice(0, 2)
+						+ " " + pad_str(formatNumberShort(inProd.effectiveRating, 4, 1), 5)
+						+ " " + pad_str(inProd.name.slice(0, 5), 5)
+						+ " " + pad_str(formatNumberShort(inProd.stored, 2, 1), 4)
+						+ " " + pad_str(formatNumberShort(inProd.actualSellAmount, 2, 1), 4)
+						+ " " + pad_str(formatNumberShort(inProd.productionAmount, 2, 1), 4)
+						+ " " + pad_str(formatNumberShort(inProd.productionCost, 2, 1), 4)
+						+ " " + pad_str(formatNumberShort(inProd.demand, 2, 1), 4)
+						+ " " + pad_str(formatNumberShort(inProd.competition, 2, 1), 4)
+						//+ " " + pad_str(formatNumberShort(inMat.desiredSellAmount, 2, 1), 4) //NaN
+						//+ " " + pad_str(formatNumberShort(inMat.desiredSellPrice, 2, 1), 4) //NaN
+						//+ " " + pad_str(inMat.exports.division, 8) //Object
+						+ " " + pad_str(formatNumberShort(inWH.sizeUsed, 2, 1), 4)
+						+ "/" + pad_str(formatNumberShort(inWH.size, 2, 1), 4)
+						+ "(" + pad_str(formatNumberShort(inWH.sizeUsed / inWH.size * 100, 2, 1), 2) + ")"
+						+ " " + pad_str(formatNumberShort(inWH.level, 2, 1), 3) + ""
+						+ " " + pad_str(formatNumberShort(inProd.developmentProgress, 4, 1), 4)
+						+ " " + pad_str(formatNumberShort(chkPrice, 2, 1), 4)
+					);
 				}
-				ns.print(" "
-					+ " " + city.slice(0, 2)
-					+ " " + pad_str(formatNumberShort(inProd.effectiveRating, 4, 1), 5)
-					+ " " + pad_str(inProd.name.slice(0, 5), 5)
-					+ " " + pad_str(formatNumberShort(inProd.stored, 2, 1), 4)
-					+ " " + pad_str(formatNumberShort(inProd.actualSellAmount, 2, 1), 4)
-					+ " " + pad_str(formatNumberShort(inProd.productionAmount, 2, 1), 4)
-					+ " " + pad_str(formatNumberShort(inProd.productionCost, 2, 1), 4)
-					+ " " + pad_str(formatNumberShort(inProd.demand, 2, 1), 4)
-					+ " " + pad_str(formatNumberShort(inProd.competition, 2, 1), 4)
-					//+ " " + pad_str(formatNumberShort(inMat.desiredSellAmount, 2, 1), 4) //NaN
-					//+ " " + pad_str(formatNumberShort(inMat.desiredSellPrice, 2, 1), 4) //NaN
-					//+ " " + pad_str(inMat.exports.division, 8) //Object
-					+ " " + pad_str(formatNumberShort(inWH.sizeUsed, 2, 1), 4)
-					+ "/" + pad_str(formatNumberShort(inWH.size, 2, 1), 4)
-					+ "(" + pad_str(formatNumberShort(inWH.sizeUsed / inWH.size * 100, 2, 1), 2) + ")"
-					+ " " + pad_str(formatNumberShort(inWH.level, 2, 1), 3) + ""
-					+ " " + pad_str(formatNumberShort(inProd.developmentProgress, 4, 1), 4)
-					+ " " + pad_str(formatNumberShort(chkPrice, 2, 1), 4)
-				);
 			}
 		}
 	}
