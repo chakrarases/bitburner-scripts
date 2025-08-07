@@ -1559,6 +1559,9 @@ async function phaseAdvancing(ns) {
 					strFName = "corporation.issueNewShares"
 					corpMoney = await getNsDataThroughFile(ns, `ns.${strFName}()`);
 					persist_log(ns, "Corp got money from issueNewShare = " + formatMoney(corpMoney));
+					strFName = "corporation.getCorporation"
+					cc = await getNsDataThroughFile(ns, `ns.${strFName}()`);
+					//cc.numShares = cc.totalShares - cc.investorShares - cc.issuedShares;
 					persist_log(ns, ""
 						+ "Share "
 						+ ",Tt " + formatNumberShort(cc.totalShares)
@@ -1566,9 +1569,6 @@ async function phaseAdvancing(ns) {
 						+ ",IS " + formatNumberShort(cc.issuedShares)
 						+ ",Ow " + formatNumberShort(cc.numShares)
 					);
-					strFName = "corporation.getCorporation"
-					cc = await getNsDataThroughFile(ns, `ns.${strFName}()`);
-					//cc.numShares = cc.totalShares - cc.investorShares - cc.issuedShares;
 				}
 				if (cc.issuedShares > 0) {
 					//buyBackShares(amount)
