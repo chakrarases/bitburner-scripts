@@ -695,7 +695,7 @@ async function initSellPrice(ns, division) {
 			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
 				`Temp/${strFName}.arm.txt`, [division.name, city, "Chemicals", "MAX", "MP*2"]);
 			//await adjPriceBino(ns, division, city, "Chemicals");
-		} else if (division.name == "Cigarette" || division.name == "Barbgon") { //Tobacco
+		} else if (division.name == "Cigarette" || division.name == "Barbgon" || division.name == "BDMS" ) { //type: Product Tobacco
 			for (let i = 0; i < division.products.length; i++) {
 				strFName = "corporation.getProduct"
 				let inProd = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
