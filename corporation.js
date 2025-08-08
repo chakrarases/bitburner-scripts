@@ -391,6 +391,26 @@ export async function main(ns) {
 							await upgradesCorp(ns, "ABC SalesBots", 180);
 							await upgradesCorp(ns, "DreamSense", 80);
 						}
+						//Shady Accounting
+						if (corpInfo.funds >= 2e15) { //2q for safety 500t money
+							let hasShadyAccounting = await getNsDataThroughFile(ns, 'ns.corporation.hasUnlock(ns.args[0])', null, ["Shady Accounting"]);
+							//ns.tprint("hasSmartSupply => " + hasSmartSupply);
+							if (!hasShadyAccounting) {
+								strFName = "corporation.purchaseUnlock";
+								await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
+									`Temp/${strFName}.arm.txt`, ["Shady Accounting"]);
+							}
+						}
+						//Government Partnership
+						if (corpInfo.funds >= 8e15) { //8q forsafety money
+							let hasGovernmentPartnership = await getNsDataThroughFile(ns, 'ns.corporation.hasUnlock(ns.args[0])', null, ["Government Partnership"]);
+							//ns.tprint("hasSmartSupply => " + hasSmartSupply);
+							if (!hasGovernmentPartnership) {
+								strFName = "corporation.purchaseUnlock";
+								await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
+									`Temp/${strFName}.arm.txt`, ["Government Partnership"]);
+							}
+						}
 
 						strFName = "corporation.getDivision";
 						let cigaInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
