@@ -1622,8 +1622,8 @@ async function phaseAdvancing(ns) {
 	strFName = "corporation.getInvestmentOffer"
 	cuInvOffer = await getNsDataThroughFile(ns, `ns.${strFName}()`);
 	if (cuInvOffer.round == 1) numTarget = 140e9;		//140b
-	if (cuInvOffer.round == 2) numTarget = 1.41e12; //1.4t
-	if (cuInvOffer.round == 3) numTarget = 11.31e12;// 11t
+	if (cuInvOffer.round == 2) numTarget = 1.41e12; //1.41t
+	if (cuInvOffer.round == 3) numTarget = 9.61e12;// 9.61t
 	if (cuInvOffer.round == 4) numTarget = 1.01e15; //1.0q
 	if (cuInvOffer.round == 5) numTarget = 1.01e18; //1.0Q
 
@@ -1708,7 +1708,7 @@ async function phaseAdvancing(ns) {
 		if (prevState == "SALE") {
 			if (!cc.public) {
 				strFName = "corporation.goPublic"
-				let numShare4Pub = 1e9;
+				let numShare4Pub = 1e6;
 				let boolGoPublic = null;
 				boolGoPublic = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 					`Temp/${strFName}.arm.txt`, [numShare4Pub]);
