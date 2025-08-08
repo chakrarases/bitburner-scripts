@@ -129,7 +129,7 @@ export async function main(ns) {
 			ns.exit();
 			//return;
 		}
-
+		
 		while (true) {
 			prevState = await ns.corporation.nextUpdate();
 			currCorp = await getNsDataThroughFile(ns, 'ns.corporation.getCorporation()'); //CorporationInfo
@@ -332,10 +332,6 @@ export async function main(ns) {
 					await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
 						`Temp/${strFName}.arm.txt`, ["Export"]);
 					ns.write("arm.corp.weed.sync.fert.txt", "none", "w");
-					ns.write("arm.corp.weed.sync.ciga.txt", "none", "w");
-					ns.write("arm.corp.weed.sync.barb.txt", "none", "w");
-					ns.write("arm.corp.weed.sync.bdms.txt", "none", "w");
-					ns.write("arm.corp.para.sync.bdms.txt", "none", "w");
 				} else {
 					if (ns.read("arm.corp.weed.sync.fert.txt") != "sync") {
 						await syncWeedFert(ns, weedInfo, fertInfo);
@@ -375,9 +371,6 @@ export async function main(ns) {
 						`Temp/${strFName}.arm.txt`, ["Export"]);
 					ns.write("arm.corp.weed.sync.fert.txt", "none", "w");
 					ns.write("arm.corp.weed.sync.ciga.txt", "none", "w");
-					ns.write("arm.corp.weed.sync.barb.txt", "none", "w");
-					ns.write("arm.corp.weed.sync.bdms.txt", "none", "w");
-					ns.write("arm.corp.para.sync.bdms.txt", "none", "w");
 				} else {
 					if (ns.read("arm.corp.weed.sync.fert.txt") != "sync") {
 						await syncWeedFert(ns, weedInfo, fertInfo);
@@ -388,26 +381,12 @@ export async function main(ns) {
 				await initSellPrice(ns, fertInfo);
 				await buyBoostMaterial(ns, weedInfo);
 				await buyBoostMaterial(ns, fertInfo);
-				await doResearch(ns, weedInfo, "Hi-Tech R&D Laboratory", 0);
-				await doResearch(ns, weedInfo, "Market-TA.I", 1e5);
-				await doResearch(ns, weedInfo, "Market-TA.II", 1e5);
+				await doResearch(ns, weedInfo, "Hi-Tech R&D Laboratory");
+				await doResearch(ns, weedInfo, "Market-TA.I");
+				await doResearch(ns, weedInfo, "Market-TA.II");
 				await turnOnMarketTA12(ns, weedInfo);
-				await doResearch(ns, weedInfo, "AutoBrew", 1e6);
-				await doResearch(ns, weedInfo, "AutoPartyManager", 1e6);
-				await doResearch(ns, weedInfo, "Automatic Drug Administration", 1e6);
-				await doResearch(ns, weedInfo, "Go-Juice", 1e6);
-				await doResearch(ns, weedInfo, "Overclock", 1e6);
-				await doResearch(ns, weedInfo, "Sti.mu", 1e6);
-				await doResearch(ns, fertInfo, "Hi-Tech R&D Laboratory", 0);
+				await doResearch(ns, fertInfo, "Hi-Tech R&D Laboratory");
 				//await doResearch(ns, fertInfo); //no need to research anything, keep RP to boost Quality
-				//await doResearch(ns, fertInfo, "AutoBrew", 1e5);
-				//await doResearch(ns, fertInfo, "AutoPartyManager", 1e5);
-				await doResearch(ns, fertInfo, "AutoBrew", 1e6);
-				await doResearch(ns, fertInfo, "AutoPartyManager", 1e6);
-				await doResearch(ns, fertInfo, "Automatic Drug Administration", 1e6);
-				await doResearch(ns, fertInfo, "Go-Juice", 1e6);
-				await doResearch(ns, fertInfo, "Overclock", 1e6);
-				await doResearch(ns, fertInfo, "Sti.mu", 1e6);
 				await reportProduction(ns, weedInfo);
 				await reportProduction(ns, fertInfo);
 				if (corpInfo.divisions[2] == "Cigarette" && corpInfo.funds >= 2e12) { //Require 2t money
@@ -467,21 +446,112 @@ export async function main(ns) {
 					}
 					await initSellPrice(ns, cigaInfo);
 					await buyBoostMaterial(ns, cigaInfo);
-					await doResearch(ns, cigaInfo, "Hi-Tech R&D Laboratory", 0);
-					await doResearch(ns, cigaInfo, "Market-TA.I", 1e5);
-					await doResearch(ns, cigaInfo, "Market-TA.II", 1e5);
-					await turnOnMarketTA12(ns, cigaInfo);
-					await doResearch(ns, cigaInfo, "uPgrade: Fulcrum", 2e5);
-					await doResearch(ns, cigaInfo, "uPgrade: Capacity.I", 2e5);
-					await doResearch(ns, cigaInfo, "uPgrade: Capacity.II", 2e5);
-					await doResearch(ns, cigaInfo, "AutoBrew", 1e6);
-					await doResearch(ns, cigaInfo, "AutoPartyManager", 1e6);
-					await doResearch(ns, cigaInfo, "Automatic Drug Administration", 1e6);
-					await doResearch(ns, cigaInfo, "Go-Juice", 1e6);
-					await doResearch(ns, cigaInfo, "Overclock", 1e6);
-					await doResearch(ns, cigaInfo, "Sti.mu", 1e6);
+					await doResearch(ns, cigaInfo, "Hi-Tech R&D Laboratory");
+					await doResearch(ns, cigaInfo, "Market-TA.I");
+					await doResearch(ns, cigaInfo, "Market-TA.II");
+					await doResearch(ns, cigaInfo, "uPgrade: Fulcrum");
+					await doResearch(ns, cigaInfo, "uPgrade: Capacity.I");
+					await doResearch(ns, cigaInfo, "uPgrade: Capacity.II");
 					await doProduct(ns, cigaInfo, "Marlboro"); // Product Name please longer than 4 characters
+					await turnOnMarketTA12(ns, cigaInfo);
 					await reportProduction(ns, cigaInfo);
+				}
+				if (corpInfo.divisions[3] == "Barbgon" && corpInfo.funds >= 20e12) { //20t money
+					await upgradesCorp(ns, "FocusWires", 50);
+					await upgradesCorp(ns, "Neural Accelerators", 50);
+					await upgradesCorp(ns, "Speech Processor Implants", 50);
+					await upgradesCorp(ns, "Nuoptimal Nootropic Injector Implants", 50);
+					strFName = "corporation.getDivision";
+					let barbInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[3]]); //Barbgon
+					await initCities(ns, barbInfo);
+					await initOffice(ns, barbInfo);
+					await initOfficeParty(ns, barbInfo);
+					if (!hasExport) {
+						ns.write("arm.corp.weed.sync.barb.txt", "none", "w");
+					} else {
+						if (ns.read("arm.corp.weed.sync.barb.txt") != "sync") {
+							await syncWeedBarb(ns, weedInfo, barbInfo);
+							ns.write("arm.corp.weed.sync.barb.txt", "sync", "w");
+						}
+					}
+					await initSellPrice(ns, barbInfo);
+					await buyBoostMaterial(ns, barbInfo);
+					await buyBoostMaterial(ns, barbInfo);
+					await doResearch(ns, barbInfo, "Hi-Tech R&D Laboratory");
+					await doResearch(ns, barbInfo, "Market-TA.I");
+					await doResearch(ns, barbInfo, "Market-TA.II");
+					await doResearch(ns, barbInfo, "uPgrade: Fulcrum");
+					await doResearch(ns, barbInfo, "uPgrade: Capacity.I");
+					await doResearch(ns, barbInfo, "uPgrade: Capacity.II");
+					await doProduct(ns, barbInfo, "Hotpot"); // Product Name please longer than 4 characters
+					await turnOnMarketTA12(ns, barbInfo);
+					await reportProduction(ns, barbInfo);
+				}
+				if (corpInfo.divisions[4] == "BDMS" && corpInfo.funds >= 20e12) { //20t money
+					await upgradesCorp(ns, "FocusWires", 90);
+					await upgradesCorp(ns, "Neural Accelerators", 90);
+					await upgradesCorp(ns, "Speech Processor Implants", 90);
+					await upgradesCorp(ns, "Nuoptimal Nootropic Injector Implants", 90);
+					//ABC SalesBots
+					await upgradesCorp(ns, "ABC SalesBots", 110);
+					strFName = "corporation.getDivision";
+					let bdmsInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[4]]); //BDMS
+					await initCities(ns, bdmsInfo);
+					await initOffice(ns, bdmsInfo);
+					await initOfficeParty(ns, bdmsInfo);
+
+					if (!hasExport) {
+						ns.write("arm.corp.weed.sync.bdms.txt", "none", "w");
+					} else {
+						if (ns.read("arm.corp.weed.sync.bdms.txt") != "sync") {
+							await syncWeedBdms(ns, weedInfo, bdmsInfo);
+							ns.write("arm.corp.weed.sync.bdms.txt", "sync", "w");
+						}
+					}
+
+					await initSellPrice(ns, bdmsInfo);
+					await buyBoostMaterial(ns, bdmsInfo);
+					await doResearch(ns, bdmsInfo, "Hi-Tech R&D Laboratory");
+					await doResearch(ns, bdmsInfo, "Market-TA.I");
+					await doResearch(ns, bdmsInfo, "Market-TA.II");
+					await doResearch(ns, bdmsInfo, "uPgrade: Fulcrum");
+					await doResearch(ns, bdmsInfo, "uPgrade: Capacity.I");
+					await doResearch(ns, bdmsInfo, "uPgrade: Capacity.II");
+					await doProduct(ns, bdmsInfo, "Hospital"); // Product Name please longer than 4 characters
+					await turnOnMarketTA12(ns, bdmsInfo);
+					await reportProduction(ns, bdmsInfo);
+				}
+				if (corpInfo.divisions[5] == "Para" && corpInfo.funds >= 200e12) { //200t money
+					await upgradesCorp(ns, "FocusWires", 120);
+					await upgradesCorp(ns, "Neural Accelerators", 120);
+					await upgradesCorp(ns, "Speech Processor Implants", 120);
+					await upgradesCorp(ns, "Nuoptimal Nootropic Injector Implants", 120);
+					await upgradesCorp(ns, "ABC SalesBots", 120);
+					strFName = "corporation.getDivision";
+					let bdmsInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[4]]); //BDMS
+					strFName = "corporation.getDivision";
+					let paraInfo = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
+						`Temp/${strFName}.arm.txt`, [corpInfo.divisions[5]]); //Para
+					await initCities(ns, paraInfo);
+					await initOffice(ns, paraInfo);
+					await initOfficeParty(ns, paraInfo);
+
+					if (!hasExport) {
+						ns.write("arm.corp.para.sync.bdms.txt", "none", "w");
+					} else {
+						if (ns.read("arm.corp.para.sync.bdms.txt") != "sync") {
+							await syncParaBdms(ns, paraInfo, bdmsInfo);
+							ns.write("arm.corp.para.sync.bdms.txt", "sync", "w");
+						}
+					}
+
+					await initSellPrice(ns, paraInfo);
+					await buyBoostMaterial(ns, paraInfo);
+					await doResearch(ns, paraInfo, "Hi-Tech R&D Laboratory");
+					await reportProduction(ns, paraInfo);
 				}
 			}
 			//Warehouse API
@@ -787,11 +857,9 @@ async function initSellPrice(ns, division) {
 				let inProd = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2])`,
 					`Temp/${strFName}.arm.txt`, [division.name, city, division.products[i]]);
 				if (inProd.developmentProgress < 100) continue;
-				let txtMPPrice = "MP*1"
-				txtMPPrice = ns.read("arm.corp.MP.price.txt");
 				strFName = "corporation.sellProduct"
 				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4],ns.args[5])||true`,
-					`Temp/${strFName}.arm.txt`, [division.name, city, division.products[i], "MAX", txtMPPrice, true]);
+					`Temp/${strFName}.arm.txt`, [division.name, city, division.products[i], "MAX", "MP", true]);
 			}
 		}
 	}
@@ -859,14 +927,14 @@ async function adjPriceBino(ns, division, city, material) {
 /** 
  * @param {NS} ns
  * @param {Division} division
- * @param {string} txtReName
- * @param {number} numBuffer */
-async function doResearch(ns, division, txtReName, numBuffer = 0) {
+ * @param {string} txtReName */
+async function doResearch(ns, division, txtReName) {
 	if (prevState == "START") {
 		//let txtReName = ""
 		//txtReName = "Hi-Tech R&D Laboratory"
+		let numSpareRP = 1e5;
 		strFName = "corporation.hasResearched"
-		let hasResearch = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+		let hasHiTechRnD = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
 			`Temp/${strFName}.arm.txt`, [division.name, txtReName]);
 		/*
 		ns.print(""
@@ -874,7 +942,7 @@ async function doResearch(ns, division, txtReName, numBuffer = 0) {
 		);
 		*/
 		strFName = "corporation.getResearchCost"
-		let costResearch = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
+		let costHiTechRnD = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])`,
 			`Temp/${strFName}.arm.txt`, [division.name, txtReName]);
 		/*
 		ns.print(""
@@ -882,8 +950,8 @@ async function doResearch(ns, division, txtReName, numBuffer = 0) {
 			+ "div R.Point=" + division.researchPoints
 		);
 		*/
-		//if (txtReName == "Hi-Tech R&D Laboratory") numSpareRP = 0;
-		if (!hasResearch && (costResearch + numBuffer) <= division.researchPoints) {
+		if (txtReName == "Hi-Tech R&D Laboratory") numSpareRP = 0;
+		if (!hasHiTechRnD && (costHiTechRnD + numSpareRP) <= division.researchPoints) {
 			strFName = "corporation.research"
 			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1])||true`,
 				`Temp/${strFName}.arm.txt`, [division.name, txtReName]);
@@ -1202,12 +1270,6 @@ async function initOffice(ns, division) {
 		maxOfficelv = 18;
 	} else if (cuInvOffer.round == 4) {
 		maxOfficelv = 27;
-		if (division.name == "Cigarette") {
-			const cc = await getNsDataThroughFile(ns, 'ns.corporation.getCorporation()'); //CorporationInfo
-			if (cc.funds >= 2e12) { //2t money
-				maxOfficelv = 63; // 9 + 54
-			}
-		}
 	} else if (cuInvOffer.round == 5) {
 		maxOfficelv = 45;
 		if (division.name == "Cigarette") {
@@ -1562,7 +1624,7 @@ async function phaseAdvancing(ns) {
 	if (cuInvOffer.round == 1) numTarget = 140e9;		//140b
 	if (cuInvOffer.round == 2) numTarget = 1.41e12; //1.41t
 	if (cuInvOffer.round == 3) numTarget = 9.61e12;// 9.61t
-	if (cuInvOffer.round == 4) numTarget = 35.1e12; //35.1t
+	if (cuInvOffer.round == 4) numTarget = 1.01e15; //1.0q
 	if (cuInvOffer.round == 5) numTarget = 1.01e18; //1.0Q
 
 	log(ns, ""
@@ -1651,7 +1713,7 @@ async function phaseAdvancing(ns) {
 				boolGoPublic = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 					`Temp/${strFName}.arm.txt`, [numShare4Pub]);
 				strFName = "corporation.buyBackShares"
-				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
+				await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 					`Temp/${strFName}.arm.txt`, [numShare4Pub]);
 				//issueDividends(rate)
 				let numDivRate = 0.10;
@@ -1706,7 +1768,7 @@ async function phaseAdvancing(ns) {
 			boolGoPublic = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 				`Temp/${strFName}.arm.txt`, [numShare4Pub]);
 			strFName = "corporation.buyBackShares"
-			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])||true`,
+			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 				`Temp/${strFName}.arm.txt`, [numShare4Pub]);
 		}
 		strFName = "corporation.getCorporation"
