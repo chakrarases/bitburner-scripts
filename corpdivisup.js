@@ -212,10 +212,12 @@ async function initSellPrice(ns, division, city) {
 	let inCIndData = null;
 	inCIndData = await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0])`,
 		`Temp/${strFName}.arm.txt`, [division.type]);
-	for (let i = 0; i < inCIndData.producedMaterials.length; i++) {
-		strFName = "corporation.sellMaterial"
-		await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
-			`Temp/${strFName}.arm.txt`, [division.name, city, inCIndData.producedMaterials[i], "MAX", "MP"]);
+	if (inCIndData.makesMaterials) {
+		for (let i = 0; i < inCIndData.producedMaterials.length; i++) {
+			strFName = "corporation.sellMaterial"
+			await getNsDataThroughFile(ns, `ns.${strFName}(ns.args[0],ns.args[1],ns.args[2],ns.args[3],ns.args[4])||true`,
+				`Temp/${strFName}.arm.txt`, [division.name, city, inCIndData.producedMaterials[i], "MAX", "MP"]);
+		}
 	}
 }
 
